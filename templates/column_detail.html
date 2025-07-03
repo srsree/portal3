@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}{{column.name}} - {% endblock %}
+{% block meta %}
+<META name="description" content="{{column.description|striptags|truncatewords:'20'}}">
+<META name="keywords" content="{% for i in column.keywords.all %}{{i.name}}{% if not forloop.last %}, {% endif %}{% endfor %}">
+<meta property=”og:image” content=”{{column.icon.url_869x568}}”/>
+{% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li class="breadcum_sel"><a href="/column/{{category.slug}}/">{{category.name}}</a></li>
+        <li>{{column.name}}</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+<article class="col-lg-9 col-md-9">
+        <div class="row">
+          <div class="left_article">
+            <div class="smartbin_sec">
+              
+              <div class="smartimg"> <img style="width:1000px" src="{{column.icon.url_869x568}}" alt="{{column.name}}"/>
+               </div>
+              <div class="photo_dis clearfix">
+                <div class="col-lg-12 pull-left">
+                  <div class="row">
+                    <div class="photo_cont">
+                      {% if column.caption %}<p>{{column.caption|safe}}</p>{% endif %}
+                     </div>
+                     
+                    <div class="photoby">
+                        	<p>{{column.strap|safe}}</p>
+                        </div>
+                  </div>
+                </div>
+                <div class="common"><h1>{{column.name}}</h1></div>
+                
+                <div class="col-lg-12 pull-right">
+                  <div class="row">
+                    <div class="fb_plugin"><div class="addthis_sharing_toolbox"></div></div>
+                    
+                  </div>
+                  
+                </div>
+                <a href="#comment_form"><input type="button" class="leave_comment" value="Leave your Comment" onclick="return show_form();"/></a>
+              </div>
+            </div>
+            <div class="smart_disp column_smart_disp">
+              <h2>{{column.byline|safe}}</h2>
+              <p>
+              <div class="columncont" style="width: 44%;">
+              <img src="{{column.columnist.image.url_180x240}}" alt="image" class="columncontimg"/>
+              <p class="left_col_name">{{column.columnist.name}}</p>
+              <!--p class="left_col_cat">{{column.columnist.category.name}}</p-->
+              </div>
+              {{column.description|safe}}</p>
+              {% if column.attach_file %}
+              <a style="float:left;" target="_blank" class="leave_comment" href="{{MEDIA_URL}}{{article.attach_file}}">Download PDF</a>
+              {% endif %}
+              <input type="button" class="leave_comment" value="Leave your Comment" onclick="return show_form();"/>
+            </div>
+            {% if comit %}
+            <div class="comment_sec">
+                <h4>
+                    Thank you for your Comments. Your feedback is appreciated. The Support team will look into the comment and approve it accordingly. Please check back after sometime. 
+                </h4>
+            </div>
+            {% endif %}
+
+            <div class="comment_sec" id="comment_form">
+              <form class="form-horizontal" role="form" action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
+                  <div class="form-group">
+                  </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-2" for="name">Name:</label>
+                          <div class="col-sm-10">
+                              <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-2" for="email">Email:</label>
+                          <div class="col-sm-10">
+                            <input type="email" class="form-control" name = "email" id="email" placeholder="Enter email" required>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="control-label col-sm-2" for="image">Image:</label>
+                            <div class="col-sm-10"> 
+                              <input type="file" class="form-control" name="image "id="image">
+                            </div>
+                        </div>
+                        <div class="form-group"> 
+
+                            <label class="control-label col-sm-2" for="comment">Comment:</label>
+                              <div class="col-sm-10"> 
+                                  <textarea name="comment" class="form-control" id="commment" rows="10" cols="20" required></textarea>
+                              </div>
+                         </div>
+                          <div class="form-group"> 
+                            <div class="col-sm-offset-2 col-sm-10">
+                              <button  type="submit" class="leave_comment">Submit</button>
+                            </div>
+                          </div>
+                    
+                </form>
+            </div>
+            <div class="comment_sec">
+              <h2>Comments</h2>
+              {% if column.get_comments %}
+              <ul>
+                {% for i in column.get_comments %}
+                <li class="clearfix">
+                  <div class="col-lg-1 col-sm-1 col-xs-3"> 
+                      <div class="row">
+                        {% if i.image %}<img src="{{i.image.url_60x60}}" alt="{{i.name}}"/>{% else %}<img src="/static/images/me.jpg" alt="{{i.name}}"/>{% endif %}
+                      </div>
+                   </div>
+                   
+                   <div class="col-lg-11 col-sm-11 col-xs-9">
+                     <div class="row comment_cont">
+                      <p>{{i.name}} - <span>{{i.created_on}}</span></p>
+                      <p>{{i.comment}}</p>
+                     </div>
+                   </div>
+                </li>
+                {% endfor %}
+
+              </ul>
+              {% else %}
+              <p>Currently there are no Comments. Be first to write a comment!</p>
+              {% endif %}
+           </div>
+            
+            
+            
+            
+          </div>
+        </div>
+      </article>
+{% endblock %}
+{% block right %}
+
+<aside class="col-lg-3 col-md-3">
+        <div class="row">
+          <div class="right_article">
+          	  <ul class="ul_right">
+<!--                  <li>-->
+<!--                  		<div class="font_s">-->
+<!--                            <h2>{{menu.name}}</h2>-->
+<!--                         </div>-->
+<!--                         <img src="{{menu.image.url_270x180}}" alt="{{menu.name}}"/>-->
+<!--                         <p>{{menu.description|safe|striptags|truncatewords:"20"}}</p>-->
+<!--                  		<a class="readmore" href="/{{menu.slug}}/">Read More</a>-->
+<!--                  </li>-->
+                   {% for i in category.get_columns %}
+                   <li>
+                       <a href="/column/{{category.slug}}/{{i.slug}}/"> <h3>{{i.name}}</h3></a>
+                         <p>{{i.description|safe|striptags|truncatewords:"15"}}</p>
+                  		<a class="readmore" href="/column/{{category.slug}}/{{i.slug}}/">Read More</a>
+                  </li>
+                  {% endfor %}
+              </ul>
+          </div>
+          
+        </div>
+      </aside>
+
+<script type="text/javascript">
+  function show_form(){
+      $('#comment_form').show();
+  }
+</script>
+
+<script>
+  $("body").on("submit", "form", function() {
+      $(this).submit(function() {
+          return false;
+      });
+      return true;
+  });
+  
+  </script>
+  
+{% endblock %}
+

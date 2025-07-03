@@ -1,0 +1,641 @@
+from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.utils.translation import gettext_lazy as _
+from django.forms import ModelForm
+from thumbs import ImageWithThumbsField
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User,UserManager
+import watson
+
+
+
+def model_has_field(model_class, field_name):
+    return field_name in model_class._meta.get_all_field_names()
+
+NAME_PREFIX_CHOICES = (('Mr.','Mr'), ('Ms.','Ms'),('Mis','Miss'),('Mrs','Mrs'),('Dr','Dr'),('Sr','Sr'),('Col','Colonel'))
+GENDER_CHOICES = ( (u'M', u'Male'), (u'F', u'Female'),)
+USERTYPE_CHOICES = ( (u'1', u'NGO'), (u'2', u'Individual'),(u'3', u'Fundraiser'),)
+MOVED_TO_CHOICES = ( (1, u'Writer'), (2, u'Content Senior'),(3, u'Sub Editor'),(4, u'SME'),(5, u'Quality Check'),(6, u'Publish'),)
+CONTENT_STATUS_CHOICES = ( (1, u'Disabled'), (2, u'Public'), (3, u'Published archive'),)
+ARTICLE_TYPE_CHOICES = ( (1,u'Article'), (2,u'Expert Speak'), (3,u'Interview'), (4,u'Case Study'), (5,u'Myths and Facts'),(6, u'Inspirations'))
+TEAM_CAT_CHOICES = ((1, u'Board Of Advisors'), (2, u'Board of Directors'), (3, u'Our Team'))
+DOCTYPE_CHOICES = (('idea', 'idea'), ('organization-idea', 'organization-idea'))
+
+class Base(models.Model):
+    # Base Model
+    # which includes all common fields of every module
+    # all modules will inherit this class
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
+
+
+class Language(Base):
+    # Language Model
+    # if the site is Multilingual
+    # based on language module will display the items
+    name = models.CharField('Language Name', max_length=400)
+    slug= models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=100)
+    code = models.CharField('Language code', max_length=400, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+class Country(Base):
+    # Country Module
+    # to store all countries aroud the world
+    name = models.CharField('Country Name', max_length=400)
+
+    def __unicode__(self):
+        return self.name
+
+
+class State(Base):
+    # State Module
+    # to store all state of the country
+    country = models.ForeignKey(Country)
+    name = models.CharField('State Name', max_length=400)
+
+    def __unicode__(self):
+        return self.name
+        
+class City(Base):
+    # city Module
+    # to store all city of the State
+    state = models.ForeignKey(State)
+    name = models.CharField('City Name', max_length=400)
+
+    def __unicode__(self):
+        return self.name
+
+
+
+class Tag(Base):
+    # Tag Module
+    # to store all keywords 
+    # it can be used M2M field to modules
+    # to tag the Tags
+    # wil help in SEO results
+    # also helps in Search Functionalities
+    name = models.CharField('Tag', max_length=100)
+    slug= models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=60)
+
+    def __unicode__(self):
+        return self.name
+
+
+class AboutUs(Base):
+    # to retreive content for the about us page
+    # icon will be the image on ABout us page
+    # description will be the content of ABout us ( which is designed inside editor only)
+    name = models.CharField(max_length="200")
+    icon = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(360,480),(869,568)), blank=True,  null=True )
+    description = RichTextField(blank=True, null = True)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_images(self):
+        return Image.objects.filter(content_type__name__iexact="about us",object_id=self.id)
+
+class KeyWord(Base):
+    # keywords Module
+    # to store all keywords 
+    # it can be used M2M field to modules
+    # to tag the Tags
+    # wil help in SEO results
+    # also helps in Search Functionalities
+    name = models.CharField('Name', max_length=200)
+    slug= models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=60)
+
+class Article(Base):
+    # Model used for articles
+    # it includes all stories of site
+    article_type = models.IntegerField("Article Type *", default=1, choices=ARTICLE_TYPE_CHOICES)
+    frontmenu = models.ForeignKey('FrontMenu', blank=True, null=True, related_name="Related FrontMenu +")
+    parent = models.ForeignKey('self', blank=True, null=True)
+    headline = models.CharField('Headline', max_length=500, blank=True, null=True)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=300)
+    synopsis = models.CharField('Strap', max_length=2000, blank=True,null=True)
+    language = models.ForeignKey(Language, blank=True,null=True)
+    byline = models.CharField('Byline / summary', max_length=200, blank=True, null=True,)
+    icon = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(360,480),(869,568)), blank=True,  null=True )
+    caption = models.CharField('Photo Caption', max_length=500, blank=True, null=True,)
+    description = RichTextField(blank=True, null = True)
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
+    keywords = models.ManyToManyField(KeyWord, blank=True, null=True)
+    featured = models.BooleanField(default=False)
+    meta_title = models.TextField("Meta Page Title", blank = True, null=True)
+    meta_description = models.TextField("Meta Description", blank = True, null=True)
+    related_videos = models.ManyToManyField('mcms.Videos', blank=True, null=True)
+    display_in_frontend = models.BooleanField(default=False)
+    listing_order = models.IntegerField('Listing Order', blank=True, null=True)
+    attach_file = models.FileField(upload_to='static/%Y/%m/%d', blank=True, null=True)
+    subscriber_only = models.BooleanField(default=False)
+
+
+    def get_article_images(self):
+        return Image.objects.filter(content_type__name__iexact="article",object_id=self.id)
+
+    def get_absolute_url(self):
+        return "/%s/%s/" % (self.frontmenu.slug, self.slug)
+
+    def __unicode__(self):
+        try:
+            return "%s" % (self.headline)
+        except:
+            pass
+
+    def get_news(self):
+        try:
+            return News.objects.get(article=self)
+        except:
+            pass
+
+    def get_submitted_document(self):
+        try:
+            return SubmittedDocuments.objects.get(content_type=ContentType.objects.get_for_model(self), object_id=self.id)
+        except:
+            pass
+
+    def get_comments(self):
+        # returns comments of each article
+        return Comments.objects.filter(content_type__name__iexact="article",object_id=self.id, publish=True).order_by('-id')
+
+
+class Image(Base):
+    # Country Module
+    image = ImageWithThumbsField(upload_to='static/%Y/%m/%d', sizes=((90,120), (100,100),(120,120),(180,240),(360,480),(930,300)),blank=True,null=True,help_text="Image size should be 930x300 pixels")
+    name = models.CharField("Caption * ", blank=True, null=True, max_length=50)
+    description = models.CharField("Description", blank=True, null=True, max_length=300)
+    URL = models.URLField("Link url", max_length=200, blank=True)
+    content_type = models.ForeignKey(ContentType, verbose_name=_('content type'), related_name="content_type_set_for_%(class)s")
+    object_id = models.TextField(_('object ID'))
+    relatedTo = GenericForeignKey(ct_field="content_type", fk_field="object_id")
+
+
+    def __unicode__(self):
+        return '%s'%(self.name)
+
+
+class News(Base):
+    # Country Module
+    language = models.ForeignKey(Language, blank=True,null=True)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=60)
+    article = models.ForeignKey(Article, blank=True, null=True)
+    title = models.CharField('Title', max_length=100)
+    start_date = models.DateTimeField('Start Date', blank=True,null=True)
+    end_date = models.DateTimeField('End Date', blank=True,null=True)
+    publish_date = models.DateTimeField('Publish Date', blank=True,null=True)
+    description = RichTextField(blank=True, null = True)
+    link = models.URLField('Link Url', max_length=200,blank=True)
+    image = ImageWithThumbsField(upload_to='static/%Y/%m/%d',blank=True,null=True, sizes=((270,172),))
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.title
+
+class Glossary(Base):
+    # Glossary Module
+    headline = models.TextField(blank = True, null = True)
+    question_text = models.TextField(blank = True, null = True)
+    answer_text = models.TextField(blank = True, null = True)
+    glossary_tags = models.ManyToManyField(Tag,blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.headline
+
+class Attachment(Base):
+    # Attachment Module
+    # it can be used for any module,
+    # since its an generic foreign key 
+    name = models.CharField(max_length=60)
+    attach_file = models.FileField(upload_to='static/%Y/%m/%d', blank=True, null=True)
+    description = models.CharField("Description", blank=True, null=True, max_length=300)
+    content_type = models.ForeignKey(ContentType, verbose_name=_('content type'), related_name="content_type_set_for_%(class)s")
+    object_id = models.TextField(_('object ID'))
+    relatedTo = GenericForeignKey(ct_field="content_type", fk_field="object_id")
+
+    def __unicode__(self):
+        return self.name
+
+class Link(Base):
+    # Class describes cms links
+    # it can be used for any module,
+    # since its an generic foreign key 
+    name = models.CharField(max_length=100)
+    image = ImageWithThumbsField(upload_to='static/%Y/%m/%d', sizes=((90,120), (180, 240), (360, 480)), blank=True,null=True)
+    URl = models.URLField('Link Url', max_length=200,blank=True)
+    description = models.CharField('Description', blank=True, null=True,max_length=300)
+    content_type = models.ForeignKey(ContentType,verbose_name=_('content type'),related_name='content_type_set_for_%(cla''ss)s')
+    object_id = models.TextField(_('object ID'))
+    relatedTo = GenericForeignKey(ct_field='content_type',fk_field='object_id')
+
+    def __unicode__(self):
+        return self.name
+
+class HomeBanners(Base):
+    # HomeBanners Module
+    # all the banners of home page will be stored here
+    name = models.CharField(max_length=160)
+    language = models.ForeignKey(Language, blank=True, null=True)
+    description = RichTextField(blank=True, null = True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120), (180, 240), (360, 480), (1140, 596), (1265, 365),(749,476)), blank=True,null=True)
+    featured = models.BooleanField(default=True)
+    url = models.URLField('Url', max_length=200, blank=True, null=True)
+    listing_order = models.IntegerField(default=0)
+    article = models.ForeignKey(Article, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Category(Base):
+    # Category Module
+    # video main category
+    name = models.CharField(max_length=200)
+
+class Videos(Base):
+    # Video Module
+    # video module in which it takes Youtube Embedded source link has a input
+    # will be displayed under frontmenu
+    category = models.ForeignKey(Category, blank=True, null=True)
+    name = models.CharField(max_length=60)
+    language = models.ForeignKey(Language, blank=True, null=True)
+    image = ImageWithThumbsField(upload_to='static/%Y/%m/%d', sizes=((90,120), (180, 240), (360, 480),(368, 204),(270, 150),(270, 185),(297, 204),(571,280)), blank=True,null=True)
+    summary = models.TextField("Summary",blank=True, null=True, max_length=800)
+    description = models.TextField("Description",blank=True, null=True, max_length=800)
+    featured = models.BooleanField(default=True)
+    url = models.URLField('Video Url', max_length=200,blank=True)
+    display_in_home = models.BooleanField(default=False)
+
+    def __unicode__ (self):
+        return self.name
+
+    @staticmethod
+    def get_absolute_url(self):
+        # url of each videos
+        # will help in sitemap
+        return "/videos/"
+
+class FrontMenu(Base):
+    # All menus will be stored here
+    # all menus treated like section
+    name = models.CharField(max_length=60)
+    language = models.ForeignKey(Language, blank=True,null=True)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=60, blank=True, null=True)
+    url = models.URLField('Link Url', max_length=200,blank=True,null=True)
+    listingOrder = models.IntegerField(default=0)
+    image = ImageWithThumbsField(upload_to='static/%Y/%m/%d', sizes=((90,120), (180, 240), (360, 480), (368, 209), (200, 133),(270,180)), blank=True,null=True)
+    parent = models.ForeignKey('self', blank=True,null=True)
+    headline = models.CharField("Headline", max_length=200, blank=True, null=True)
+    description = RichTextField("Description", blank=True, null = True)
+    faq_category = models.ManyToManyField('faq.FAQ_Category', blank=True, null=True, related_name="Related Faq +")
+    article = models.ManyToManyField(Article, blank=True, null=True, related_name="Related Article +")
+    related_videos = models.ManyToManyField('Videos', blank=True, null=True)
+    keywords = models.ManyToManyField(KeyWord, blank=True, null=True)
+    meta_title = models.TextField("Meta Page Title", blank = True, null=True)
+    meta_description = models.TextField("Meta Description", blank = True, null=True)
+    featured_article = models.ForeignKey(Article, blank=True,null=True, related_name ="Featured Article +")
+    display_in_menu = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_sub_menus(self):
+        # if any menu has submenu
+        # to retrieve all sub menus we are using this function
+        return FrontMenu.objects.filter(parent = self, active=True)
+
+    def get_menu_images(self):
+        # to get all images of particular menus
+        # which can be used for banners for inner pages
+        return Image.objects.filter(content_type__name__iexact="front menu",object_id=self.id).order_by('?')[:1]
+
+    def get_image(self):
+        # to get all images of particular menus
+        # which can be used for banners for inner pages
+        try:
+            return Image.objects.filter(content_type__name__iexact="front menu",object_id=self.id).order_by('?')[0]
+        except:
+            pass
+
+
+    def get_absolute_url(self):
+        # to get alink of particular menus
+        # which can be used for sitemap
+        return "/%s/" % (self.slug)
+
+    def get_latest_article(self):
+        # getting latest article of menu, 
+        # to display in the home page
+        art = ''
+        try:
+            art1 =Article.objects.filter(frontmenu=self, active=True).order_by('listing_order')[:1]
+            art = art1[0]
+        except:
+            pass
+        return art
+
+    def get_articles(self):
+        # to retrieve all articles of particular menu.
+        # which are tagged to particular menus
+        art = ''
+        try:
+            art =Article.objects.filter(frontmenu=self, active=True).order_by('-id')
+        except:
+            pass
+        return art
+
+    def get_quotes(self):
+        # returns the quotes of particular menu
+        return Quotes.objects.filter(frontmenu=self)
+
+
+
+class Team(Base):
+    # Team Module
+    # currently we are not using this model
+    # for feature it may come
+    name = models.CharField(max_length=60)
+    language = models.ForeignKey(Language, blank=True, null=True)
+    designation = models.CharField(max_length=30,blank=True, null = True)
+    category = models.IntegerField("Category", default=1, choices=TEAM_CAT_CHOICES)
+    description = RichTextField(blank=True, null = True)
+    quotes = models.CharField(max_length=1600,blank=True, null = True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120), (120, 120), (180, 240), (360, 480)), blank=True,null=True)
+    listingOrder = models.IntegerField(default=0)
+    
+    def __unicode__(self):
+        return self.name
+
+
+    @staticmethod
+    def get_absolute_url(self):
+        return "/about-us/the-team/"
+
+
+class ColumnCategory(Base):
+    name = models.CharField("Name*", max_length=200)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=100, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_columns(self):
+        return Columns.objects.filter(columnist__category=self, active=True).order_by("-created_on")
+
+class Columnists(Base):
+    # Columnists Module
+    # using to display in right side bar, columinists
+    category = models.ForeignKey(ColumnCategory)
+    name = models.CharField("Name*", max_length=200)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=100, blank=True, null=True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((60,60), (90,120), (180, 240), (360, 480), (158, 160), (270, 179)), blank=True,null=True)
+    quote = models.TextField("Quote", blank=True, null=True)
+    link = models.URLField("Article url", max_length=200, blank=True)
+    col_order = models.IntegerField(blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_latest_column(self):
+        column = ''
+        try:
+            column = Columns.objects.filter(columnist = self, active=True).latest('id')
+        except:
+            pass
+        return column
+
+
+class Columns(Base):
+    # ExpertsSpeakProfile Module
+    # currently we are not using this model
+    # for feature it may come
+    columnist = models.ForeignKey(Columnists)
+    name = models.CharField('Headline', max_length=200, blank=True, null=True)
+    language = models.ForeignKey(Language, blank=True,null=True)
+    synopsis = models.CharField('Strap', max_length=2000, blank=True,null=True)
+    byline = models.CharField('Byline / summary', max_length=200, blank=True, null=True,)
+    caption = models.CharField('Photo Caption', max_length=200, blank=True, null=True,)
+    icon = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(360,480),(869,568)), blank=True,  null=True )
+    description = RichTextField(blank=True, null = True)
+    tags = models.ManyToManyField(Tag, blank=True, null=True)
+    keywords = models.ManyToManyField(KeyWord, blank=True, null=True)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=300)
+    related_videos = models.ManyToManyField('mcms.Videos', blank=True, null=True)
+    featured = models.BooleanField(default=False)
+    meta_title = models.TextField("Meta Page Title", blank = True, null=True)
+    meta_description = models.TextField("Meta Description", blank = True, null=True)
+    attach_file = models.FileField(upload_to='static/%Y/%m/%d', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_comments(self):
+        # returns comments of each article
+        return Comments.objects.filter(content_type__name__iexact="columns",object_id=self.id, publish=True).order_by('-id')
+
+class ConnectWithUs(Base):
+    # ConnectWithUs Module
+    # for enquiry form we can use thsi model
+    name = models.CharField('Name *', max_length=200)
+    email = models.EmailField(blank=True, null=True)
+    area_of_interest = models.CharField('Area of Intrest *', max_length=200,blank=True, null=True)
+    message = RichTextField(blank = True, null =True)
+    receive_update = models.BooleanField(default=False)
+
+
+    def __unicode__(self):
+        return self.name
+
+class Job(Base):
+    # Job Module
+    # all jobs will be stored here
+    name = models.CharField(max_length=200, blank=True, null=True)
+    description = RichTextField(blank=True, null = True)
+    language = models.ForeignKey(Language, blank=True,null=True)
+    parent = models.ForeignKey('self', blank=True, null=True)
+    location = models.TextField()
+    role = models.CharField(max_length=200, blank=True, null=True)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=100,blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Quotes(Base):
+    # Quotes Module
+    # Quotes from experts will be stored here
+    name = models.CharField('Name', max_length=400)
+    language = models.ForeignKey(Language, blank=True, null=True)
+    frontmenu = models.ForeignKey(FrontMenu, blank=True, null=True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(114,106),(270,280)),blank=True,  null=True)
+    designation = models.CharField(max_length=100, blank=True, null=True)
+    description = RichTextField(blank=True, null = True)
+    link = models.URLField("Link", max_length=200, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+class Comments(Base):
+    # Comments Module
+    # Comments is generic foreign key,
+    name = models.CharField("Your Name*", max_length=200)
+    email = models.EmailField("Your Email*", max_length=200)
+    image = ImageWithThumbsField("Your Image",upload_to = 'static/%Y/%m/%d', sizes=((60,60),(90,120),(114,106),(270,280)),blank=True,  null=True)
+    comment = models.TextField("Your Comment", blank=True, null=True)
+    publish = models.BooleanField(default=False)
+    content_type = models.ForeignKey(ContentType, verbose_name=_('content type'), related_name="content_type_set_for_%(class)s")
+    object_id = models.TextField(_('object ID'))
+    relatedTo = GenericForeignKey(ct_field="content_type", fk_field="object_id")
+
+    def __unicode__(self):
+        return self.name
+
+    def get_article(self):
+        art = None
+        try:
+            # art = Article.objects.get(id=int(self.object_id))
+            art = self.content_type.model_class().objects.get(id=int(self.object_id))
+        except:
+            pass
+        return art
+
+# position choices used for Ads module
+POSITION_CHOICES = (('top','TOP (371 x 126)'), ('center','CENTER 270 x 270'),('bottom','BOTTOM 270 x 270'))
+
+class Ads(Base):
+    # Ads Module
+    # based on position top, middle and bottom we will display the adds
+    # written templatetags to retrieve all position ads
+    position = models.CharField("Ad Position*", max_length=200, choices=POSITION_CHOICES)
+    name = models.CharField("Ad Name*", max_length=200)
+    image = ImageWithThumbsField("Ad Image",upload_to = 'static/%Y/%m/%d', sizes=((60,60),(90,120),(114,106),(270,270),(371,68), (371,126)),blank=True, null=True)
+    code = models.TextField("Code Script", blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+class Gallery(Base):
+    # Gallery Module
+    # all gallery category will be stored here
+    name = models.CharField("Gallery Name*", max_length=200)
+    front_image = ImageWithThumbsField("Ad Image",upload_to = 'static/%Y/%m/%d', sizes=((60,60),(90,120),(114,106),(270,270),(371,68)),blank=True, null=True)
+    link = models.CharField("Gallery URL", max_length=200, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+    def get_images(self):
+        # getting images of particular gallery object
+        return Image.objects.filter(content_type__name__iexact="gallery",object_id=self.id).order_by('created_on')
+
+class PhotoFeature(Base):
+    # PhotoFeature module
+    # Used for slider purpose in home page
+    name = models.CharField("Name*", max_length=200)
+    slug = models.SlugField(max_length=500, blank=True, null=True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(371,242),(869,568)), blank=True, null=True )
+    URL = models.URLField("Link url", max_length=200, blank=True)
+    description = RichTextField(blank=True, null = True)
+
+    def __unicode__(self):
+        return self.name
+
+class PhotoFeatureImages(Base):
+    photo_feature = models.ForeignKey(PhotoFeature, related_name="Photo Feature of Photo +")
+    name = models.CharField("Name*", max_length=200)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(371,242),(869,568)), blank=True, null=True )
+    description = RichTextField(blank=True, null = True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Archive(Base):
+    # Archive Module
+    # All archive files will be stored in this module
+    name = models.CharField("Name*", max_length=200)
+    upload_file = models.FileField(upload_to='static/%Y/%m/%d', blank=True, null=True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((90,120),(180,240),(270,180),(371,242),(869,568)), blank=True,  null=True )
+    date = models.DateField(blank=True, null=True)
+
+
+
+
+class Currentissue(Base):
+    # Currentissue Module
+    # which we are displaying in right side bar
+    # it includes name, image and attachment
+    # when we click on current issue attachment file will open in new tab
+    name = models.CharField("Name*", max_length=200)
+    slug = models.SlugField("SEO friendly url, use only aplhabets and hyphen", max_length=100, blank=True, null=True)
+    image = ImageWithThumbsField(upload_to = 'static/%Y/%m/%d', sizes=((60,60), (83, 61), (83, 117), (270, 179)), blank=True,null=True)
+    attachment = models.FileField("Upload Pdf", upload_to='static/%Y/%m/%d', blank=True, null=True)
+    text = models.TextField("Text", blank=True, null=True)
+
+    def __unicode__(self):
+        # unicode method
+        # it will display the name of current issue
+        return self.name
+
+class Subscribe(Base):
+    #Subscribe Model
+    email = models.EmailField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.email
+
+class NewsLetter(Base):
+    # News Letter Module
+    # News letter to be displayed 
+    name = models.CharField(max_length=200)
+    description = RichTextField(blank=True, null = True)
+    email = models.EmailField(blank=True, null=True)
+
+class NewsLetterEnquiry(Base):
+    email = models.EmailField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.email
+
+class WriteToUs(Base):
+    # Write to Us models
+    # to save all data provided by the user to the editors,
+    # no need to show in frontend, only in CMS we need to show all the list.
+    description = models.TextField("Content")
+    name = models.CharField("Name* ", max_length=500)
+    email = models.CharField("Email* ", max_length=50)
+    location = models.CharField("Location*", max_length=100)
+
+    def __unicode__(self):
+        # unicode method
+        # it will display the name of User as a unicode object
+        return self.name
+
+
+class UserPasswordChange(models.Model):
+    user = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return self.user.username
+
+class Editor(Base):
+    user = models.ForeignKey(User)
+    editor_type = models.CharField("Editor Type", blank=True, null=True, max_length=200)
+
+    def __unicode__(self):
+        return self.user.username
+
+# registering to Watson app
+# if we register here, it will include all objects of registered
+# so that it will include all models to search
+watson.register(Article)
+watson.register(FrontMenu)
+

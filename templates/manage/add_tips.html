@@ -1,0 +1,96 @@
+{% extends "manage/base.html" %}
+{% block title %} Tips {% endblock %}
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+</script>
+
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/jquery.validate.min.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        jQuery.validator.addMethod("complete_url", function(val, elem) {
+                if (val.length == 0) { return true; }
+                if(!/^(https?|ftp):\/\//i.test(val)) {
+                val = 'http://'+val; // set both the value
+                $(elem).val(val); // also update the form element
+                }
+                return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(val);
+                }, "Please enter a valid url");
+        $("#tips_form").validate({
+            rules :
+            {
+                header : {required : true},
+                category : {required : true},
+            },
+            messages:
+            {
+            header : {required : "please enter the header"},
+            category : {required : "please select category"},
+            }
+        });
+     });
+</script>
+
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add Tips
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Tips</h2>
+                    </div>
+                    <div class="box-content">
+                        {% if edit %}
+                        <form id="tips_form" action = "/manage-section/edit-tips/?tips-tips_id={{id_edit}}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% else %}
+                        <form id="tips_form" action = "/manage-section/add-tips/" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% endif %}
+                        {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                        {% for field in form %}
+                        <div class="input-group col-md-4">
+                            {{ field.label_tag }}
+                            <br/>
+                            {{ field }}
+                            <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                        </div>
+                    {% endfor %}
+                        <br>
+                        <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>&nbsp;&nbsp;
+                        <a href="/manage/?key=tips" style="text-decoration:none;"><button type="button" class="btn btn-default">Cancel</button> </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

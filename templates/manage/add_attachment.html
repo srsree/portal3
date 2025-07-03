@@ -1,0 +1,78 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Article{% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+
+<!-- URL funding Should be Menu Slug Field -->
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#attachment_form").validate({
+            rules : {
+                name : { required : true },
+                },
+            messages :
+            {
+            name : {required : "please enter the name"},
+            }
+        });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add Attachment
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Attachment</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="attachment_form" action = "/manage-section/edit-attachment/?atc_id={{atc_id}}&key={{key}}&art_id={{art_id}}&next=/manage/?key={{key}}" enctype="multipart/form-data" method = "post">{% csrf_token %}
+                        {% else %}
+                            <form id="attachment_form" action = "/manage-section/add-attachment/?key={{key}}&ct_id={{gal_id}}&next=/manage/?key={{key}}" enctype="multipart/form-data" method = "post">{% csrf_token %}
+                        {% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

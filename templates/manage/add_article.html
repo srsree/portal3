@@ -1,0 +1,141 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Article{% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+
+</script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link href="/static/css/multi-select.css" rel='stylesheet'>
+
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keywords').tagsInput({width:'auto'});
+	    });
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        if ("{{edit}}"){
+            if ("{{article.language.slug}}" == "english"){
+                $('#parent_id').hide();
+            }
+        }
+        if ("{{disp}}" && "{{edit_done}}"){
+            alert("Document Saved Successfully")
+            window.parent.location="/manage-section/?key='article';
+        }
+        else if ("{{edit_done}}"){
+            alert("Document published Successfully")
+            window.parent.location="/manage/?key=workflowblock&publish=True";
+        }
+        $('#id_related_videos').multiSelect();
+
+        $("#article_form").validate({
+            rules :
+            {
+            headline : {required : true,maxlength:150, minlength:10},
+            },
+            messages :
+            {
+                headline : {required : "please enter headline"},
+		    }
+        });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+{% load staticfiles %}
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    {% if disp %}Edit{% else %}Publish{% endif %} Article
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+        {% if edit_done %}
+            <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>Changes Successfully Edited!</strong> 
+            </div>
+            {% endif %}
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>{% if disp %}Edit{% else %}Publish{% endif %} Article</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="article_form" action = "/manage-section/edit-article/?art_id={{art_id}}{% if disp %}&disp={{disp}}{% endif %}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% else %}
+                            {% if ref %}
+                            <form id="article_form" action = "/manage-section/add-article/?ref={{ref}}&lang={{lang}}" enctype="multipart/form-data" method = "post">
+                            {% else %}
+                            <form id="article_form" action = "/manage-section/add-article/" enctype="multipart/form-data" method = "post">
+                            {% endif %}
+                            {% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="form-group1" id="{{field.name}}_id">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <br>
+                        <div class="form-group1">
+                                <label for="id_keywords" class="new_label">Keywords</label>
+                                <input type="text" name="keywords" class="input_style" id="id_keywords" value="{% if tags %}{{tags}}{% endif %}"/>
+                        </div>
+                        <div class="form-group1">
+                        
+                            <button type="submit" class="btn btn-default mybtn">Save</button>
+                            <a href="/manage/?key=article"><input type="button" value="Close" class="btn btn-default mybtn" style="width:9%"></a>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

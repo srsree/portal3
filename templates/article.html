@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+{% load front_tags %}
+{% block title %}{{article.headline}} - {% endblock %}
+{% block meta %}
+<meta name="twitter:card" content="summary"  />
+<meta name="twitter:title" content="{{article}}" />
+<meta name="twitter:description" content="{{article.description|striptags|truncatewords:'5'}}" />
+<meta name="twitter:image" content="https://civilsocietyonline.com/{{article.icon.url}}" />
+<META name="description" content="{{article.description|striptags|truncatewords:'20'}}">
+<META name="keywords" content="{% for i in article.keywords.all %}{{i.name}}{% if not forloop.last %}, {% endif %}{% endfor %}">
+<meta property="og:image" content="{{article.icon.url_869x568}}"/>
+{% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+{% if not no_perm %}
+{% if not not_subscribed %}
+<!--    <form class="form-horizontal" role="form" action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <div class="comment-box">
+            <div class="bg-comment">
+                <h2>Comment here</h2>
+                <input type="text" class="com-text" name="name" id="name" placeholder="Enter Name" required>
+                <input type="email" class="com-text" name = "email" id="email" placeholder="Enter email" required>
+                <textarea class="com-text" rows="3" cols="35" name="comment" placeholder="Comment"></textarea>
+                <input type="submit" value="Submit" class="sub-btn"/>
+            </div>
+        </div>
+    </form> --> 
+<!-- this is commented on 24mar for the paywall integration --->
+<!-- {% if not request.user.is_authenticated %}   
+<div id="containerPopup" style="display: none;z-index:99999999; width:100%;">
+    <div class="pop-window">
+    </div>
+        <div class="pop-img">
+            <h5>You've read your last free article this month.
+                For full access,</h5>
+            <a href="/subscribe2/" class="sub-button" id="cloase-popup">SUBSCRIBE NOW</a><br/><br/>
+            <h5>Already a subscriber?
+            <a href="/login/" class="sub-button" id="cloase-popup">Login</a></h5>
+        </div>
+</div>
+{% endif %} -->
+<!-- this is commented on 24mar for the paywall integration end's here  --->
+<div class="generate_form">
+                        <div class="color_icon">Feedback</div>
+                        <div class="actual_form">
+                            <form class=" " role="form" action="." method="POST" enctype="multipart/form-data"> {% csrf_token %}
+                                <h2>Comment here</h2>
+                <input type="text" class="com-text" name="name" id="name" placeholder="Enter Name" required="">
+                <input type="email" class="com-text" name="email" id="email" placeholder="Enter email" required="">
+                <textarea class="com-text" rows="3" cols="35" name="comment" placeholder="Comment"></textarea>
+                <input type="submit" value="Submit" class="sub-btn">
+                            </form>
+                        </div>
+                    </div>
+{% endif %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li class="breadcum_sel"><a href="/{{menu.slug}}/">{{menu.name}}</a></li>
+        <li>{{article.headline}}</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+{% block left %}
+{% if not no_perm %}
+<article class="col-lg-9 col-md-9">
+        <div class="row">
+          <div class="left_article">
+            <div class="smartbin_sec">
+              
+              <div class="smartimg"> <img style="width:1000px" src="{{article.icon.url_869x568}}" alt="{{article.name}}"/>
+               </div>
+              <div class="photo_dis clearfix">
+                <div class="col-lg-12 pull-left">
+                  <div class="row">
+                    <div class="photo_cont">
+                      {% if article.caption %}<p>{{article.caption|safe}}</p>{% endif %}
+                     </div>
+                     
+                    <div class="photoby">
+                        	<p>{{article.strap|safe}}</p>
+                        </div>
+                  </div>
+                </div>
+                <div class="common"><h1>{{article.headline}}</h1></div>
+                
+                <div class="col-lg-6 pull-right">
+                  <div class="row">
+                    <div class="fb_plugin"><div class="addthis_sharing_toolbox"></div></div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="count" value={{cookie_obj}}>                        
+            <div class="smart_disp">
+            {% if not not_subscribed %}<a href="#comment_form"><input type="button" class="leave_comment" value="Leave your Comment" onclick="return show_form();"/></a>{% endif %}
+              <h2>{{article.byline|safe}}</h2>
+              <div class="pubupfont">  
+                  Published:  {{ article.created_on|date:"M. d, Y" }}
+              </div>
+              <div class="pubupfont2">  
+                  Updated: {{ article.modified_on|date:"M. d, Y" }}
+              </div>
+		<br/>
+              <p>{% if not_subscribed %}{{article.description|safe}}{% else %}{{article.description|safe}}{% endif %}</p>
+              {% if article.attach_file %}
+              <a style="float:left;" target="_blank" class="leave_comment" href="{{MEDIA_URL}}{{article.attach_file}}">Download PDF</a>
+              {% endif %}
+            
+            {% if not not_subscribed %}<input type="button" class="leave_comment" value="Leave your Comment" onclick="return show_form();"/>{% endif %}
+            </div>
+            {% if comit %}
+            <div class="comment_sec">
+                <h4>
+                    Thank you for your Comments. Your feedback is appreciated. The Support team will look into the comment and approve it accordingly. Please check back after sometime. 
+                </h4>
+            </div>
+            {% endif %}
+            {% if not not_subscribed %}
+            <div class="comment_sec" id="comment_form">
+                <form class="form-horizontal" role="form" action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="form-group">
+                            </div>
+                              <div class="form-group">
+                                <label class="control-label col-sm-2" for="name">Name:</label>
+                                <div class="col-sm-10">
+                                  <input type="text" class="form-control" name="name" id="name" placeholder="Enter Name" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="control-label col-sm-2" for="email">Email:</label>
+                                <div class="col-sm-10">
+                                  <input type="email" class="form-control" name = "email" id="email" placeholder="Enter email" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+                                <label class="control-label col-sm-2" for="image">Image:</label>
+                                <div class="col-sm-10"> 
+                                  <input type="file" class="form-control" name="image "id="image">
+                                </div>
+                              </div>
+                              <div class="form-group"> 
+
+                                    <label class="control-label col-sm-2" for="comment">Comment:</label>
+                                    <div class="col-sm-10"> 
+                                        <textarea name="comment" class="form-control" id="commment" rows="10" cols="20" required></textarea>
+                                    </div>
+                              </div>
+                              <div class="form-group"> 
+                                <div class="col-sm-offset-2 col-sm-10">
+                                  <button type="submit" class="leave_comment">Submit</button>
+                                </div>
+                              </div>
+                    </form>
+            </div>
+            
+            <div class="comment_sec">
+               <h2>Comments</h2>
+               {% if article.get_comments %}
+               <ul>
+                 {% for i in article.get_comments %}
+                 <li class="clearfix">
+                 	<div class="col-lg-1 col-sm-1 col-xs-3"> 
+                       <div class="row">
+                         {% if i.image %}<img src="{{i.image.url_60x60}}" alt="{{i.name}}"/>{% else %}<img src="/static/images/me.jpg" alt="{{i.name}}"/>{% endif %}
+                       </div>
+                    </div>
+                    
+                    <div class="col-lg-11 col-sm-11 col-xs-9">
+                      <div class="row comment_cont">
+                       <p>{{i.name}} - <span>{{i.created_on}}</span></p>
+                       <p>{{i.comment}}</p>
+                      </div>
+                    </div>
+                 </li>
+                 {% endfor %}
+
+               </ul>
+               {% else %}
+               <p>Currently there are no Comments. Be first to write a comment!</p>
+               {% endif %}
+            </div>
+            {% endif %}
+            {% if not_subscribed %}
+<!--            <div class="wid">-->
+<!--                <input type="button" class="leave_comment subread" value="Subcribe to read more"/>-->
+
+<!--            </div>-->
+            {% endif %}
+          </div>
+        </div>
+<!-- this is also commented on 24mar -->
+      <!-- {% if not_subscribed %}
+      <div class="row">
+        	<div id="data" style="margin-left:33%;">
+                <p>To read more <a href="/subscribe/"><b>SUBSCRIBE</b></a> and track India like never before..</p>     -->
+<!--                <p>Get full online access to <br>Civil Society magazine.</a></p>-- this line is prev commneted>
+               <!--  <p>Already a subscriber? <a href="/login/"><b>LOGIN</b></a></p>
+           </div>
+	   </div> -->
+<!-- this is also commented on 24mar  end's here -->
+
+
+
+<!--<div class="row">-->
+<!--    <div class="broe">-->
+<!--    <div class="inner_cont">-->
+<!--    <h2>Subscribe</h2>-->
+<!--    -->
+<!--    </div>-->
+<!--    <div class="subscribe_div">-->
+<!--    <form action="." method="POST">{% csrf_token %}-->
+<!--           <p>Get full online access to Civil Society magazine-->
+<!--PLUS latest issues delivered to your inbox.</p>-->
+<!--<p></p>-->
+<!--            <p>Newsletters, listings, NGO/activist connections, opportunities-->
+<!--to volunteer and donate and much more.</p>-->
+
+<!--                {% get_rupee 12 as 12rupee %}-->
+<!--                {% get_rupee 50 as 50rupee %}-->
+
+<!--                <div class="int-p">-->
+<!--                <p><strong>International:</strong></p>-->
+<!--                    <p><input type="radio" name="amount" checked="checked" value="int-1"> $12 online access for 1 year</input></p>-->
+<!--                    <p><input type="radio" name="amount"  value="int-2"> $50 online PLUS print edition for 1 year</input></p>-->
+<!--                <p></p>-->
+<!--		<br/>-->
+<!--                <p><strong>India:</strong></p>-->
+<!--                    <p><input type="radio" name="amount"  value="ind-1"> Rs 700 online access / only print version for 1 year</input></p>-->
+<!--                    <p><input type="radio" name="amount"  value="ind-2"> Rs 1200 online PLUS print edition for 1 year</input></p>-->
+<!--                    <p><input type="radio" name="amount"  value="ind-3"> Rs 1500 online PLUS print edition for 2 years</input></p>-->
+<!--                </div>-->
+<!--                </div>-->
+<!--           <h4>Billing Details:</h4>-->
+
+<!--           <input type="hidden" name="merchant_id" value="{{merchant_id}}">-->
+<!--           <input type="hidden" name="order_id" value="{{order_id}}">-->
+<!--           <input type="hidden" name="currency" value="INR">-->
+<!--           <input type="hidden" name="language" value="en">-->
+<!--            <input type="hidden" name="access_code" id="access_code" value="{{access_code}}">-->
+<!--           <input type="hidden" name="redirect_url" value="{{redirect_url|urlencode}}">-->
+<!--           <input type="hidden" name="cancel_url" value="{{redirect_url|urlencode}}">-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Customer Name *" name="billing_name" required="required">-->
+<!--           </div>-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Profession*" name="billing_profession" required="required">-->
+<!--           </div>-->
+<!--            <div class="form_label col-lg-12">-->
+<!--              <input type="email" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Email *" id="email" name="billing_email" required="required">-->
+<!--           </div>-->
+<!--            <div class="form_label col-lg-12">-->
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Address *" name="billing_address" required="required">-->
+<!--           </div>-->
+<!--            <div class="form_label col-lg-12">-->
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="City *" name="billing_city" required="required">-->
+<!--           </div>-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12"  placeholder="State *" name="billing_state" required="required">-->
+<!--           </div>-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              {% get_countires as contries %}-->
+<!--              <select name="billing_country" class=" input_type-new col-lg-6 col-sm-9 col-xs-12">-->
+<!--              <option value="">Select Country *</option>-->
+<!--              {% for i in contries %}-->
+<!--                <option value="{{i.id}}">{{i.name}}</option>-->
+<!--            {% endfor %}-->
+<!--              </select>-->
+
+<!--           </div>-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Zipcode *" name="billing_zip" required="required">-->
+<!--           </div>-->
+<!--           <div class="form_label col-lg-12">-->
+<!--              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12 col-lg-6 col-sm-9 col-xs-12" placeholder="Phone *" name="billing_tel" required="required">-->
+<!--           </div>-->
+<!--        -->
+<!--          -->
+<!--          <div class="form_label col-lg-12"> -->
+<!--           <textarea class="text_ar-new col-lg-6 col-sm-9 col-xs-12" placeholder="Areas of interest..." name="billing_cust_notes"></textarea>-->
+<!--         </div>-->
+<!--         <input type="submit" value="Proceed to Pay" class="leave_comment pull-left pay-btn"/>-->
+<!--    </form>-->
+<!--    </div>-->
+<!--    </div>-->
+<!-- this is commented on 24mar -->
+     <!--  {% endif %} -->
+<!-- this is commented on 24mar end's here-->
+      </article>
+{% endif %}
+{% endblock %}
+
+{% block right %}
+{% if not no_perm %}
+<aside class="col-lg-3 col-md-3">
+        <div class="row">
+          <div class="right_article">
+          	  <ul class="ul_right">
+<!--                  <li>-->
+<!--                  		<div class="font_s">-->
+<!--                            <h2>{{menu.name}}</h2>-->
+<!--                         </div>-->
+<!--                         <img src="{{menu.image.url_270x180}}" alt="{{menu.name}}"/>-->
+<!--                         <p>{{menu.description|safe|striptags|truncatewords:"20"}}</p>-->
+<!--                  		<a class="readmore" href="/{{menu.slug}}/">Read More</a>-->
+<!--                  </li>-->
+                   {% for i in menu.get_articles %}
+                   <li>
+                       <a href="/{{menu.slug}}/{{i.slug}}/"> <h3>{{i.headline}}</h3></a>
+                         <p>{{i.description|safe|striptags|truncatewords:"15"}}</p>
+                  		<a class="readmore" href="/{{menu.slug}}/{{i.slug}}/">Read More</a>
+                  </li>
+                  {% endfor %}
+                    <li>
+                        <h3 class="comment-red">Enter your comments we would like to hear from you.</h3>
+                       
+                               <form action="." method="POST" onsubmit="return thanks();">{% csrf_token %}
+                               <div class="form_label">
+                                  <input type="text" class="input_type" name="name" placeholder="Name *" id="first_name" required="required">
+                               </div>
+                            
+                               <div class="form_label">
+                                  
+                                  <input type="email" class="input_type" placeholder="Email *" id="email" name="email" required="required">
+                               </div>
+                              <div class="form_label"> 
+                               <textarea class="text_ar" placeholder="Comments..." name="comment"></textarea>
+                             </div>
+                             <input type="submit" value="Submit" class="input_sub"/>
+                            </form>
+                  </li>
+                  
+              </ul>
+<!--              <div class="olx"> <img alt="image" src="/static/img/tata.jpg"> </div>-->
+          </div>
+          
+        </div>
+      </aside>
+<!-- this is paywall code commented on 24mar --->
+<!-- {% if not request.user.is_authenticated %}
+{%block popup%}
+<div class="container"> 
+    <div class="foot_ul pop-border">
+    </div>
+</div>-->
+<!-- this is paywall code commented on 24mar --->
+<!--bottom popup-->
+<!--popup slide-->
+<!-- <div class="pop-bg">
+    <div id="popp_coll" class="common-popup">
+        <div class="container">
+            <div class="close-pop">X
+            </div>
+        <h5> 
+            You've read <span id='subs_text'></span> out of 3 free articles this month.   For full access  <a href="/subscribe2/" class="sub-button" id="cloase-popup">SUBSCRIBE NOW</a></h5><br/>
+        <h5>Already a subscriber?
+            <a href="/login/" class="sub-button" id="cloase-popup">Login</a></h5>
+        
+        
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% endif %} -->
+
+<!-- this is paywall code commented on 24mar  end's here --->
+<script type="text/javascript">
+    function thanks(){
+        alert('Thanks for your feedback');
+    }
+</script>
+<script type="text/javascript">
+    function show_form(){
+        $('#comment_form').show();
+    }
+</script>
+<!--{% if not_subscribed %}-->
+<!-- <script>-->
+<!--        window.jQuery || document.write('<script src="https://www.civilsocietyonline.com/static/frontend/js/vendor/jquery-1.10.2.min.js"><\/script>')-->
+<!--    </script>-->
+<!--<script type="text/javascript">-->
+<!--        $(document).ready(function () {-->
+<!--            url = '/'+'{{article.frontmenu.slug}}'+'/'+'{{article.slug}}'+ '/'-->
+<!--            subscribe(url);-->
+<!--        });-->
+<!--        -->
+<!--    </script>-->
+<!--{% endif %}-->
+{% else %}
+<article class="col-lg-9 col-md-9">
+    <div class="row">
+        <div class="left_article">
+            <h2 style="min-height:465px;">You have not subscribed to online version. <a href="/subscribe/"><b>Subscribe</b></a> for online to view articles.</h2>
+        </div>
+    </div>
+</article>
+{% endif %}
+<style>
+.pop-window{background-color:rgba(0, 0, 0, 0.8); height: 100%;position: fixed;width: 100%;z-index:999999999;  top: 0;}
+.pop-img{position: fixed;top:40%; left: 0%; width:60%; height:auto; /*margin:-150px 0 0 -231px;*/ visibility: visible;z-index:999999999; border: 5px solid #d71921; border-radius: 5px; padding: 5px 10px 0px 10px;background-color: #d71921;  margin: 0 auto; right:0; left:0; text-align:center;}
+.pop-img h5 {margin-bottom: 20px; font-size:18px; line-height:28px; color:#fff; text-align:center; font-family: 'Open Sans', sans-serif; font-weight:100;}
+.sub-button {background: #fff;padding: 10px 25px; display: inline-block;text-align: center;margin: 0px auto;float: none; color:#d71921; font-size:16px; font-family: 'Open Sans', sans-serif; transition:all 0.4s ease; -webkit-transition:all 0.4s ease; -moz-transition:all 0.4s ease; -o-transition:all 0.4s ease;}
+.sub-button:hover{ background:#000; color:#fff; text-decoration:none;}
+.new-popup-button {background: #111b22;padding: 8px 25px;color:#fff;font-size: 14px;float: left; transition:all 0.4s ease; -webkit-transition:all 0.4s ease; -moz-transition:all 0.4s ease; -o-transition:all 0.4s ease; font-family: 'Open Sans', sans-serif; color:#fff; text-decoration:none;}
+.new-popup-button:hover { background:#d71921; color:#fff; text-decoration:none;}
+
+.pop-bg .container {width: 100%;text-align: center; padding: 30px 25px; display:none;}
+.foot_ul.pop-border {border-bottom: none; margin-bottom:20px; width:100%; float:left; text-align:right;}
+.pop-bg{background-color: #d71921; width:100%; float:left; margin-top: 20px; position:fixed; bottom:0; left:0; z-index:999999;}
+.pop-bg h5 {margin:0 23px 20px 0; font-size:18px; line-height:28px; color:#fff; text-align:center; font-family: 'Open Sans', sans-serif; font-weight:100;}
+.pop-bg .sub-button {background: #fff;padding: 10px 25px; display: inline-block;text-align: center;margin: 0px auto;float: none; color:#d71921; font-size:16px; line-height:24px; transition:all 0.4s ease; -webkit-transition:all 0.4s ease; -moz-transition:all 0.4s ease; -o-transition:all 0.4s ease;}
+.pop-bg .sub-button:hover{ background:#333; color:#fff;}
+.close-pop {width: 25px;height: 25px;background: #fff;border-radius: 25px;line-height: 25px; font-family: 'Open Sans', sans-serif; font-weight:800; transition:all 0.4s ease; -webkit-transition:all 0.4s ease; -moz-transition:all 0.4s ease; -o-transition:all 0.4s ease; cursor:pointer; z-index:9999999; position: absolute; left: auto; right:20px;}
+.close-pop:hover { background:#000; color:#fff;}
+.bottom-sec{ width:100%; float:left; position:relative;}
+</style>
+<!--{% block fancy %}-->
+<style>
+.generate_form{  overflow:hidden; position:fixed; right:-300px;  top:40%; z-index:999; transition:all 0.4s ease-in 0s; }
+.actual_form{ float:left; box-shadow:-4px 1px 10px 1px #9b9898; margin:10px 0; width:300px; padding:30px 30px 20px 40px; background:#fff; }
+.color_icon {margin-top: 10px; position: relative;z-index: 99999; background: url(../img/left-arrrrow.jpg) center center no-repeat; cursor: pointer;width: 80px;height: auto;float: left; background: red;color: #fff; text-align: center;padding: 5px;}
+
+
+.pubupfont {
+    width:100%;
+    float:left;
+    font-family:'Open Sans', sans-serif;
+    font-size: 13px;
+    color: #6d6d6d;
+}
+.pubupfont2 {
+    width:100%;
+    float:left;
+    font-family:'Open Sans', sans-serif;
+    font-size: 13px;
+    color: #6d6d6d;
+    margin-bottom: 15px;
+
+}
+
+</style>
+{% endblock %}
+<!--{% endblock %}-->

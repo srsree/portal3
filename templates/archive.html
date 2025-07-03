@@ -1,0 +1,48 @@
+{% extends "home.html" %}
+{% block title %}Archive - {% endblock %}
+{% load front_tags %}
+
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li><a href="#">Archive</a></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block banner %}
+
+ {% endblock %}
+{% block left %}
+<div class="inner_cont">
+    <h2>Archive</h2>
+    </div>
+<article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="left_con">
+            <ul>
+              {% for i in archives %}
+              <li class="col-lg-4 col-sm-4 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <!--<h2>innovations</h2>-->
+                  </div>
+                  <a target="_blank" href="{{MEDIA_URL}}{{i.upload_file}}"><img src="{{i.image.url_270x180}}" alt="{{i.name}}"/></a>
+                  <a target="_blank" href="{{MEDIA_URL}}{{i.upload_file}}"><h3>{{i.name}}</h3></a>
+              </li>
+              {% endfor %}
+              
+            </ul>
+          </div>
+ 
+        </div>
+      </article>
+{% endblock %}
+

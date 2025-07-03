@@ -1,0 +1,222 @@
+{% extends "manage/base.html" %}
+{% load template_tags %}
+{% block title %}Manage Document{% endblock %}
+
+
+{% block rightcontent %}
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link href="/static/css/multi-select.css" rel='stylesheet'>
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keywords').tagsInput({width:'auto'});
+	    });
+    });
+
+</script>
+{{ form.media }}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+        $('#id_publish_date').attr("required","required");
+        $('#id_start_date').attr("required","required");
+        $('#id_end_date').attr("required","required");
+    });
+
+</script>
+<style>
+    .custom-header{background-color: black;color: white;}
+</style>
+
+
+<script type="text/javascript">
+	function select_state_user(sel){
+        var val = sel.value;
+	    $.ajax({
+	        method : 'GET',
+	        data:{'sid':val,'workflow':val},
+	        url:"/manage-section/get-move-state-users/",
+	        success:function(data){
+               $('#assigners_span').html(data);
+               load_Select();
+           }
+	    })
+	}
+</script>
+<script>
+    function load_Select(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+        $('#assigners').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+            selectionHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+            afterInit: function(ms){
+            var that = this,
+                $selectableSearch = that.$selectableUl.prev(),
+                $selectionSearch = that.$selectionUl.prev(),
+                selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+            that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+            .on('keydown', function(e){
+              if (e.which === 40){
+                that.$selectableUl.focus();
+                return false;
+              }
+            });
+
+            that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+            .on('keydown', function(e){
+              if (e.which == 40){
+                that.$selectionUl.focus();
+                return false;
+              }
+            });
+          },
+          afterSelect: function(){
+            this.qs1.cache();
+            this.qs2.cache();
+          },
+          afterDeselect: function(){
+            this.qs1.cache();
+            this.qs2.cache();
+          }
+        });
+        $('#select-all').click(function(){
+          $('#assigners').multiSelect('select_all');
+          return false;
+        });
+        $('#deselect-all').click(function(){
+          $('#assigners').multiSelect('deselect_all');
+          return false;
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        if ("{{disp}}" && "{{edit_done}}"){
+            alert("Document Saved Successfully")
+            window.parent.location="/manage-section/manage-workflowblock/{{wb_id}}/";
+        }
+        else if ("{{edit_done}}"){
+            alert("Document published Successfully")
+            window.parent.location="/manage/?key=workflowblock&publish=True";
+        }
+        var lang = "{{lang}}";
+        if (lang && lang != "None"){
+            $('#id_slug').show();
+            $('label[for="id_slug"]').show();
+        }
+        else {
+            $('#id_slug').hide();
+            $('label[for="id_slug"]').hide();
+        }
+		    $('#id_related_article').multiSelect();
+        $('#id_related_block').multiSelect();
+        $('#id_faq_category').multiSelect();
+        $('#id_related_videos').multiSelect();
+        $("#user_form").validate({
+            rules :
+            {
+            name : {required : true,maxlength:60},
+            },
+
+        });
+		    $('#id_publish_date').datetimepicker({format:'Y-m-d H:i',});
+		    $('#id_start_date').datetimepicker({format:'Y-m-d H:i',});
+		    $('#id_end_date').datetimepicker({format:'Y-m-d H:i',});
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+    <div id="row">
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Create Document
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Create Document</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form role="form" id="user_form" action = "." method = "post">{% csrf_token %}
+                        {% else %}
+                            {% if ref %}
+                            <form role="form" id="user_form" action = "/manage-section/add-workflowblock/?ref={{ref}}&lang={{lang}}" method = "post">
+                            {% elif menu %}
+                            <form role="form" id="user_form" action = "/manage-section/add-workflowblock/?menu={{menu}}&lang={{lang}}" method = "post">
+                            {% else %}
+                            <form role="form" id="user_form" action = "/manage-section/add-workflowblock/" method = "post">
+                            {% endif %}
+                            {% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red;"><b>{{error}}</b></p>{% endif %}
+                            {% if articleblock %}
+                                <input type="hidden" name="aid" value="{{articleblock.id}}">
+                            {% endif %}
+                            {% for field in form %}
+                            <div class="form-group1">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            <br/>
+                            {% endfor %}
+                            
+                            <div class="form-group1">
+                                <label for="id_keywords" class="new_label">Keywords</label>
+                                <input type="text" name="keywords" class="input_style" id="id_keywords" value="{% if tags %}{{tags}}{% endif %}"/>
+                                <span class="help-block" style="float:right;"> Use " , " or 'Enter' to seperate tags</span>
+                            </div>
+                            <div class="form-group1">
+                                <button type="submit" class="btn btn-default mybtn" >{% if disp %}Save{% else %}Publish{% endif %}</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+    </div>
+{% endblock %}
+{% block footer %}{% endblock %}
+

@@ -1,0 +1,81 @@
+from django.conf.urls import include, url
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.http import HttpResponse
+from django.urls import path
+
+from mcms import views as mcms_views
+from mcms import manage_views
+
+# Portal URL Configuration
+urlpatterns = [
+    url(r'^$', mcms_views.home, name='home'),
+    url(r'^ckeditor/', include('ckeditor.urls')),
+    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow: /", content_type="text/plain")),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'static'}),
+    url(r'^gallery/', mcms_views.gallery, name='gallery'),
+    url(r'^more/', mcms_views.more, name='more'),
+    url(r'^search/', mcms_views.search, name='search'),
+    url(r'^photo-feature/$', mcms_views.photo, name='photo'),
+    url(r'^about-us/$', mcms_views.about_us, name='about_us'),
+    url(r'^photo-feature/(?P<slug>[a-zA-Z0-9_\ .,-]+)/$', mcms_views.photo_feature, name='photo_feature'),
+    url(r'^admin/', admin.site.urls),
+    url(r'^change-password/$', mcms_views.password_change),
+    # url('^change-password/', auth_views.password_change),
+    url(r'^password/reset/$', auth_views.password_reset, {'is_admin_site':True,'template_name': 'registration/my_password_reset_form.html'}),
+    url(r'^password_reset/done/$', auth_views.password_reset_done, {'template_name': 'registration/my_password_reset_done.html'}, name='password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, {'template_name' : 'registration/my_password_reset_confirm.html'}, name='password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.password_reset_complete, {'template_name': 'registration/my_password_reset_complete.html'}, name='password_reset_complete'),
+    url(r'', include('ccavenue.urls', namespace='ccavenue')),
+    # url(r'', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^manage-home/', manage_views.home),
+    url(r'^column/(?P<slug>[a-zA-Z0-9_\ .,-]+)/$', mcms_views.column, name='column'),
+    url(r'^columns/$', mcms_views.columns, name='columns'),
+    url(r'^column/(?P<cslug>[a-zA-Z0-9_\ .,-]+)/(?P<slug>[a-zA-Z0-9_\ .,-]+)/$', mcms_views.column_detail, name='column_detail'),
+    url(r'^manage/admin', manage_views.adminlogin, name='login'),
+    url(r'^adm/logout/$', manage_views.adminlogout, name='logout'),
+    url(r'^manage/', manage_views.manage),
+    url(r'^login/', mcms_views.frontend_login),
+    url(r'^newsletter/', mcms_views.newsletter, name='newsletter'),
+    url(r'^write-to-us/', mcms_views.write_to_us, name='writetous'),
+    url(r'^logout/', mcms_views.signout, name='civil-logout'),
+    url(r'^archive/', mcms_views.archive, name='archive'),
+    url(r'^manage-section/deactivate/', manage_views.deactivate),
+    url(r'^manage-section/delete/', manage_views.delete_func),
+    url(r'^manage-section/activate/', manage_views.activate),
+    url(r'^manage-section/unpublish/', manage_views.unpublish),
+    url(r'^manage-section/publish/', manage_views.publish),
+    url(r'^manage-section/comment/(?P<publish>.+)/', manage_views.publishcomment),
+    url(r'^manage-section/add-article/', manage_views.add_article),
+    url(r'^manage-section/edit-article/', manage_views.edit_article),
+    url(r'^manage-section/delete-article/', manage_views.delete_article),
+    url(r'^manage-section/activate-article/', manage_views.activate_article),
+    url(r'^manage-section/add-editor/', manage_views.add_editor),
+    url(r'^manage-section/add-image/', manage_views.add_image),
+    url(r'^manage-section/edit-image/', manage_views.edit_image),
+    url(r'^manage-section/delete-image/', manage_views.delete_image),
+    url(r'^manage-section/activate-image/', manage_views.activate_image),
+    url(r'^menu-management/', include('mcms.urls', namespace='mcms', app_name='mcms')),
+    url(r'^manage-section/add-form/', manage_views.add_form),
+    url(r'^manage-section/edit-form/', manage_views.edit_form),
+    url(r'^manage-section/change-password/', manage_views.change_password),
+    url(r'^manage-section/add-videos/', manage_views.add_videos),
+    url(r'^manage-section/edit-videos/', manage_views.edit_videos),
+    url(r'^manage-section/delete-videos/', manage_views.delete_videos),
+    url(r'^manage-section/activate-videos/', manage_views.activate_videos),
+    url(r'^manage-section/add-frontmenu/', manage_views.add_frontmenu),
+    url(r'^manage-section/edit-frontmenu/', manage_views.edit_frontmenu),
+    url(r'^manage-section/delete-frontmenu/', manage_views.delete_frontmenu),
+    url(r'^manage-section/activate-frontmenu/', manage_views.activate_frontmenu),
+    url(r'^manage-section/add-our-banners/', manage_views.add_our_banners),
+    url(r'^manage-section/edit-our-banners/', manage_views.edit_our_banners),
+    url(r'^manage-section/delete-our-banners/', manage_views.delete_our_banners),
+    url(r'^manage-section/activate-our-banners/', manage_views.activate_our_banners),
+    url(r'^sitemap.xml/$', mcms_views.sitemap),
+    url(r'^(?P<slug>[a-zA-Z0-9_\ .,-]+)/$', mcms_views.inner, name="inner"),
+    url(r'^(?P<slug>[a-zA-Z0-9_\ .,-]+)/(?P<aslug>[a-zA-Z0-9_\ .,-]+)/$', mcms_views.article, name="article"),
+]
+
+urlpatterns += [
+    path('accounts/', include('allauth.urls')),
+]

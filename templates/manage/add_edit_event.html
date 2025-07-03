@@ -1,0 +1,204 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Event{% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+</script>
+
+<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+<script type="text/javascript">
+$(document).ready(function()
+{
+   
+   {% if add == True %}
+	$('#id_City option').remove()
+	{% endif %}
+    $("#id_state").change(function()
+    {
+        var id=$(this).val();
+        $.ajax({
+                url : "/manage-section/get_city/",
+                type : "GET",
+                dataType: "json",
+                data :{'id':id},
+                success: function(data)
+                {
+           
+                    $('#id_City option').remove()
+                    $('<option>', {value : ''}).html('-------').appendTo('#id_City');
+                    if (data)
+                    {
+                        var res = data.res
+                        for (i=0;i<res.length;i++)
+                        {
+                            $('<option>', {value : res[i].id }).html(res[i].name).appendTo('#id_City');
+                        }
+                    }
+                }
+            })
+        return false;
+    });
+});
+</script>
+
+<script type="text/javascript">
+        $(document).ready(function()
+        {
+            $('#characterLeft').text('500 characters left');
+            $('#id_title').keyup(function () {
+                var max = 500;
+                var len = $(this).val().length;
+                    if (len >= max) {
+                    $('#characterLeft').text(' you have reached the limit');
+                    } else {
+                            var ch = max - len;
+                            $('#characterLeft').text(ch + ' characters left');
+                            }
+            });
+        
+
+        	$('#id_start_date').datetimepicker({format:'Y-m-d H:i',});
+        	$('#id_end_date').datetimepicker({format:'Y-m-d H:i',});
+        });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+   $.validator.addMethod("enddate", function(value, element){
+           var startdatevalue = $('#id_start_date').val();
+           var st_date = startdatevalue.substring(0,10);
+           var ed_date = value.substring(0,10);
+            return Date.parse(st_date) <= Date.parse(ed_date);
+     }, '"To Date" should be greater than equal to "From Date".');
+
+     $.validator.addMethod("time", function(value, element){
+           var startdatevalue = $('#id_start_date').val();
+           var st_date = startdatevalue.substring(0,10);
+           var ed_date = value.substring(0,10);
+           var st_t = startdatevalue.substring(10,16);
+           var ed_t = value.substring(10,16);
+           if (Date.parse(st_date) == Date.parse(ed_date)){
+                return st_t < ed_t;
+           }
+           else{
+            return true;
+           }
+           
+     }, 'On same date "To time" should be greater than "From time".');
+
+        $("#event_form").validate({
+            rules :
+            {
+            title : {required : true,maxlength:500, minlength:3},
+            start_date : {required : true,maxlength:50},
+            description : {required : true,maxlength:500, minlength:3},
+            state : {required : true,maxlength:100},
+            City : {required : true,maxlength:100},
+            pincode : {digits : true, required : true,maxlength:6, minlength:6},
+            end_date : { required : true , enddate : true, time : true},
+            },
+            messages :
+			{
+                title : {required : "please enter the title"},
+                start_date : {required : "please select from date"},
+                end_date : {required : "please select to date"},
+                state : {required : "please select the state"},
+                City : {required : "please select the city"},
+                pincode : {required : "please enter the pincode"},
+			},
+        });
+    });
+</script>
+<script>
+$(document).ready(function(){
+$('.jqte_toolbar').append('<div><p style="margin-top:7px" id="mycount"></p></div>');
+            $('#mycount').text('500 characters left');
+             $('.jqte_editor').bind('keyup', function(event) {
+                var max = 500;
+                var len = $('.jqte_editor').text().length
+                    if (len >= max) {
+                    $('#mycount').text(' you have reached the limit');
+                    } else {
+                            var ch = max - len;
+                            $('#mycount').text(ch + ' characters left');
+                            }
+    });
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        if ('{{lang}}' == 'english' ) {
+            $("#div_slug").hide();
+        }
+        else if ('{{edit}}') {
+            $("#div_slug").hide();
+        }
+        else {
+            $("#div_slug").show();
+        }
+    });
+</script>
+{{form.media}}
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add Event
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Event</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="event_form" enctype="multipart/form-data" action = "/manage-section/edit-event/?event_id={{event.id}}" method = "post" role="form">{% csrf_token %}
+                        {% else %}
+                        {% if ref %}
+                        <form id="event_form" action = "/manage-section/add-event/?ref={{ref}}&lang={{lang}}" method = "post" enctype="multipart/form-data" role="form">
+                        {% else %}
+                        <form id="event_form" action = "/manage-section/add-event/" method = "post" enctype="multipart/form-data" role="form">
+                        {% endif %}{% csrf_token %}
+                        {% endif %}
+                            {% if msg %}<p style="color:red"><b>{{msg}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="form-group1" id="div_{{field.name}}">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-default mybtn">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

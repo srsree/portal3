@@ -1,0 +1,132 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Expert Profile{% endblock %}
+
+
+{% block rightcontent %}
+{{form.media}}
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+</script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#id_tags').multiSelect();
+        $('#id_descriptor').jqte({linktypes: ["Web URL", "E-mail", "Picture"]});
+        $('#id_text').jqte({linktypes: ["Web URL", "E-mail", "Picture"]});
+    })
+</script>
+<script type = "text/javascript">
+    $(document).ready(function(){
+        $('label[for="id_publication_category"]').css('display', 'none');
+        $( "#id_publication_category" ).val(5);
+    });
+</script>
+<style type="text/css">
+#id_publication_category{
+display:none;
+}
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#expert_speak_form").validate({
+            rules :
+            {
+            name : {required : true,maxlength:150},
+            },
+
+        });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+<script>
+$(document).ready(function(){
+$('.jqte_toolbar').append('<div><p style="margin-top:7px" id="mycount"></p></div>');
+            $('#mycount').text('500 characters left');
+             $('.jqte_editor').bind('keyup', function(event) {
+                var max = 500;
+                var len = $('.jqte_editor').text().length
+                    if (len >= max) {
+                    $('#mycount').text(' you have reached the limit');
+                    } else {
+                            var ch = max - len;
+                            $('#mycount').text(ch + ' characters left');
+                            }
+    });
+});
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        if ('{{lang}}' == 'english' ) {
+            $("#div_slug").hide();
+        }
+        else if ('{{edit}}') {
+            $("#div_slug").hide();
+        }
+        else {
+            $("#div_slug").show();
+        }
+    });
+</script>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=es_profile">Expert Profile</a>
+                </li>
+                <li>
+                    Add Expert Profile
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Expert Profile</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="expert_speak_form" enctype="multipart/form-data" action="/manage-section/edit-experts-speak-profile/?objid={{ id_edit }}" method = "post" role="form">{% csrf_token %}
+                        {% else %}
+                            <form id="expert_speak_form" enctype="multipart/form-data" action="/manage-section/add-experts-speak-profile/" method = "post" role="form">{% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="form-group1" id="div_{{field.name}}">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-default mybtn">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

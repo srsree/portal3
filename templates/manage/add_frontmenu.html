@@ -1,0 +1,304 @@
+{% extends "manage/base.html" %}
+{% block title %} Manage Front Menu {% endblock %}
+
+
+{% block rightcontent %}
+
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/css/multi-select.css" rel="stylesheet" type="text/css" />
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keywords').tagsInput({width:'auto'});
+	    });
+    });
+
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('#id_faq_category').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              selectionHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+        $('#id_article').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              selectionHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+        $('#id_experts_speak').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              selectionHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+       $('#id_related_videos').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              selectionHeader: "<input type='text' class='search-input' style='width:100%;' autocomplete='off' placeholder='type to search'>",
+              afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $.validator.addMethod("extension", function(value, element, param) {
+	                param = typeof param === "string" ? param.replace(/,/g, "|") : "png|jpe?g|gif";
+	                return this.optional(element) || value.match(new RegExp(".(" + param + ")$", "i"));
+                }, $.validator.format("Please enter a file with a valid extension(png|jpe/g|gif)."));
+        jQuery.validator.addMethod("complete_url", function(val, elem) {
+                if (val.length == 0) { return true; }
+                if(!/^(https?|ftp):\/\//i.test(val)) {
+                val = 'http://'+val; // set both the value
+                $(elem).val(val); // also update the form element
+                }
+                return /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uPCVCF])|(%[\da-f]{2})|[!\$&amp;'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(val);
+                }, "Please enter a valid url");
+        $("#frontmenu_form").validate({
+            rules :
+            {
+                name : {required : true},
+                url : {complete_url:true},
+                listingOrder: { required: true, digits: true },
+                image : { extension : true },
+            },
+            messages:
+            {
+                name : {required : "please enter the name"},
+                //listingOrder : {required : "please enter the listing order"},
+            }
+        });
+     });
+</script>
+
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        if ('{{lang}}' == 'english' ) {
+            $("#div_slug").hide();
+        }
+        else if ('{{edit}}') {
+            $("#div_slug").hide();
+        }
+        else {
+            $("#div_slug").show();
+        }
+    });
+</script>
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add Front Menu
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            {% if edit_done %}
+            <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>Changes Successfully Edited!</strong> 
+            </div>
+            {% endif %}
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Front Menu</h2>
+                    </div>
+                    <div class="box-content">
+                    
+                       {% if msg %}
+                        <!--font color="blue"><h3>{{msg}}</h3></font-->
+                      {% endif %}
+                    
+                   
+                    
+                    
+                        {% if edit %}
+                        <form id="frontmenu_form" action = "/manage-section/edit-frontmenu/?frontmenu-frontmenu_id={{id_edit}}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% else %}
+                        {% if ref %}
+                        <form id="frontmenu_form" action = "/manage-section/add-frontmenu/?ref={{ref}}&lang={{lang}}" method = "post" enctype="multipart/form-data">
+                        {% else %}
+                        <form id="frontmenu_form" action = "/manage-section/add-frontmenu/" method = "post" enctype="multipart/form-data">{% endif %}{% csrf_token %}
+                        {% endif %}
+                        {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                        {% for field in form %}
+                        <div class="form-group1" id="div_{{field.name}}">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                        </div>
+                    {% endfor %}
+                        <br>
+                        <div class="form-group1" id="div_tags">
+                                <label for="id_keywords" class="new_label">Keywords</label>
+                                <input type="text" name="keywords" id="id_keywords" value="{% if tags %}{{tags}}{% endif %}" class="input_style"/>
+                                <span class="help-block" style="float:right;"> Use " , " or 'Enter' to seperate tags</span>
+                                <br/>
+                            </div>
+                            <br/>
+                        <button type="submit" class="btn btn-default mybtn">{% if edit %}Save Changes{% else %}Submit{% endif %}</button>
+                        <a href="/manage/?key=frontmenu"><input type="button" value="Close" class="btn btn-default mybtn" style="width:9%"></a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

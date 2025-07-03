@@ -1,0 +1,87 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Pressroom {% endblock %}
+{% block rightcontent %}
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/js/image_validation.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#id_date').datetimepicker({format:'Y-m-d',});
+        $("#publications_form").validate({
+            rules :
+            {
+            name : {required : true},
+            category : {required : true },
+            },
+            messages :
+            {
+            name : {required : "Please enter the name"},
+            category : {required : "Please select category"}
+            }
+        });
+    });
+</script>
+
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=publications">Publications </a>
+                </li>
+                <li>
+                    Add Publications 
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Publications</h2>
+                    </div>
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="publications_form" action="/manage-section/edit-publications/?publications-publications_id={{ id_edit }}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                             <!--font face="verdana" color="green"> Please upload image below size 1024 X 657</font-->
+                        {% else %}
+                            <form id="publications_form" action="/manage-section/add-publications/" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                           <!--font face="verdana" color="green"> Please upload image below size 1024 X 657</font-->
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "manage/base.html" %}
+{% load wsf_tags %}
+{% block title %}Role Access{% endblock %}
+
+{% block rightcontent %}
+
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/static/js/jquery.multi-select.js"> </script>
+<link href="/static/css/multi-select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#id_permissions').multiSelect();
+        $("#roleaccessform").validate({
+                rules : {
+                    admin_user : { required : true},
+                    role : { required : true},
+                },
+                messages : {
+                    admin_user : { required : "Please select admin user "},
+                    role : { required : "Please select role"},
+                }
+            });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>Role Access</li>
+            </ul>
+        </div>
+
+    {% if task == 'list' %}
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>Role Access</h2>
+
+                        <div class="box-icon">
+                            <a href="/menu-management/role-access/add/" class="btn btn-round btn-default">
+                                <i class="glyphicon glyphicon-plus-sign" title="Add Menu Role">Add RoleAccess</i>
+                            </a>
+                            <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                    class="glyphicon glyphicon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div class="box-content">
+                        {% if item_list %}
+                            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ra in item_list %}
+                                        <tr>
+                                            <td class="center">{{ ra.admin_user.user.first_name }} {{ ra.admin_user.user.last_name }}</td>
+                                            <td class="center">{{ ra.admin_user.user.email }} </td>
+                                            <td class="center">{{ ra.role.name }}</td>
+                                            <td class="center">
+                                                {% if ra.active %}
+                                                    <span class="label-success label label-default">Active</span>
+                                                {% else %}
+                                                    <span class="label-default label">Inactive</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="center">
+                                                <a class="btn btn-info" href="/menu-management/role-access/edit/?objid={{ra.id}}">
+                                                    <i class="glyphicon glyphicon-edit icon-white"></i>
+                                                    Edit
+                                                </a>
+                                                {% if ra.active %}
+                                                <a class="btn btn-danger" href="/menu-management/role-access/delete/?objid={{ra.id}}">
+                                                    <i class="glyphicon glyphicon-remove icon-white"></i>
+                                                    Deactivate
+                                                </a>
+                                                {% else %}
+                                                <a class="btn btn-success" href="/menu-management/role-access/active/?objid={{ra.id}}">
+                                                    <i class="glyphicon glyphicon-ok icon-white"></i>
+                                                    Activate
+                                                </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        
+                        {% else %}
+                            <div class="alert alert-info">
+                                No Records found.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if task == 'add' or task == 'edit' %}
+
+    <div class="box-content">
+
+        {% if task == 'add' %}
+            <form id="roleaccessform" action="/menu-management/role-access/add/" method = "post">{% csrf_token %}
+        {% else %}
+            <form id="roleaccessform" action="/menu-management/role-access/edit/?objid={{ objid }}" method = "post">{% csrf_token %}
+        {% endif %}
+        {% if msg %}<p style="color:red"><b>{{msg}}</b></p>{% endif %}
+        {% for field in form %}
+            <div class="input-group col-md-4">
+                {{ field.label_tag }}
+                 <br/>
+                {{ field }}
+                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+            </div>
+        {% endfor %}
+            <br>
+            <input type="hidden" name="objid" value={{objid}}>
+            <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+        </form>
+    </div>
+    </div>
+    </div>
+<!--/span-->
+    </div><!--/row-->
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+
+{% extends "base.html" %}
+{% load front_tags %}
+{% block title %}Subscribe - {% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li class="breadcum_sel"><a href="/subscribe/">Subscribe</a></li>
+        <li>Redirect</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+
+		<article class="col-lg-9 col-sm-9 col-xs-12">
+            <div class="row">
+            <h4>Please find below for the status of your transaction.</h4>
+            <div class="form_label col-lg-12">
+              <div class="col-lg-6 col-sm-9 col-xs-12">Status : {{sub.status}} </div>
+              <div class="col-lg-6 col-sm-9 col-xs-12">Transaction Number : {{sub.txnid}} </div>
+              <div class="col-lg-6 col-sm-9 col-xs-12">Amount : {{sub.amount}} </div>
+              <div class="col-lg-6 col-sm-9 col-xs-12">Name : {{sub.name}} </div>
+           </div>
+<!--		    {{data|safe}}-->
+		    </div>
+		    <div>
+		        <p> Please click <a href="/">here</a> to go back to home page</p>
+		    </div>
+		</article>
+		<article class="col-lg-9 col-sm-9 col-xs-12">
+		<div class="row">
+		<p></p>
+		<p></p>
+		</div>
+		</article>
+{% endblock %}
+{% block right %}{% endblock %}

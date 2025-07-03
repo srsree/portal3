@@ -1,0 +1,53 @@
+{% extends "manage/base.html" %}
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+{% load wsf_tags %}
+{% block title %}Manage WorkFlow Block{% endblock %}
+
+{% block rightcontent %}
+
+<div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/manage/">Home</a>
+                </li>
+                <li>Publication Articles </li>
+                {% get_hash_value wblock.section.id as hashval %}
+                <li>
+                    <a href="/manage-section/published-articles/{{hashval}}/">{{ wblock.section.headline }}</a>
+                </li>
+                <li>
+                    {{ wblock.name }}
+                </li>
+            </ul>
+        </div>
+
+        {% for art in wblock.get_articles %}
+        <div class="row" id ="edit_form_{{forloop.counter}}">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>{{ art.name }}</h2>
+                            <a href="#" class="btn btn-minimize btn-round btn-default" style="float: right;"><i
+                                    class="glyphicon glyphicon-chevron-up"></i></a>
+
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>{{ art.strap }}</h4>
+                                <h5>{{ art.text|safe }}</h5>
+                                <p>{{ art.description|safe }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+{% block footer %}{% endblock %}

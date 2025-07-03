@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}NewsLetter - {% endblock %}
+{% block banner %}{% endblock %}
+{% block right %}{% endblock %}
+{% block breadcum %}{% endblock %}
+{% block left %}
+<div class="news-div">
+    <div class="follow-cs">
+        {% if not subscribed %}
+        <form action="." method="POST">{% csrf_token %}
+            <ul>
+                <li>
+                    <h4>Want to follow Civil Society?</h4>
+                </li>
+                <li>Sign up to get our newsletters</li>
+                <li>
+                    <input type="email" class="input_type" placeholder="Your email address" name="email" required>
+                </li>
+                <li>
+                    <input type="submit" class="login-btn" value="Signup">
+                </li>
+            </ul>
+        </form>
+        {% else %}
+        <p>Thank you for signing up</p>
+        {% endif %}
+    </div>
+
+    <div class="recen-newss clearfix">
+        <h4>Recent Newsletter</h4>
+        <ul>
+            {% for news in newsletters %}
+            <li>{{news.name}}</li>
+            {% endfor %}
+        </ul>
+        <!--input type="button" class="login-btn" value="Show More"-->
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends "manage/base.html" %}
+{% load wsf_tags %}
+{% load template_tags %}
+{% block rightcontent %}
+
+<script type="text/javascript" src="/static/js/canvasjs.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+//pie chart
+var data = {{process_data|safe}};
+
+if ($("#superadminpiechart").length) {
+    $.plot($("#superadminpiechart"), data,
+        {
+            series: {
+                pie: {
+                    show: true
+                }
+            },
+            grid: {
+                hoverable: true,
+                clickable: true
+            },
+            legend: {
+                show: false
+            }
+        });
+
+    function pieHover(event, pos, obj) {
+        if (!obj)
+            return;
+        percent = parseFloat(obj.series.percent).toFixed(2);
+        $("#hover").html('<span style="font-weight: bold; color: ' + obj.series.color + '">' + obj.series.label + ' (' + percent + '%)</span>');
+    }
+
+    $("#superadminpiechart").bind("plothover", pieHover);
+}
+});
+
+</script>
+
+
+
+  <script type="text/javascript">
+  window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer",
+    {
+      title:{
+        text: "Published Documents"    
+      },
+      axisY: {
+        title: "No. of Documents"
+      },
+      legend: {
+        verticalAlign: "bottom",
+        horizontalAlign: "center"
+      },
+      theme: "theme3",
+      data: [
+
+      {        
+        type: "column",  
+        showInLegend: true, 
+        legendMarkerColor: "grey",
+        legendText: "Categories",
+        dataPoints: {{publish_data|safe}}
+      }   
+      ]
+    });
+
+    chart.render();
+  }
+  </script>
+
+
+ <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+ <div>
+    <ul class="breadcrumb">
+        <li>
+            <a href="/home/">Home</a>
+        </li>
+        <li>Dashboard</li>
+    </ul>
+</div>
+<div class="row">
+    <!-- pie chart -------->
+    <div class="box col-md-4" style="width:50%;">
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+            <h2><i class="glyphicon glyphicon-list-alt"></i> Overview of Publications In Progress</h2>
+            <div class="box-icon">
+            <a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up"></i></a>
+            <a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+            </div>
+            </div>
+            <div class="box-content">
+                <div id="superadminpiechart" style="height:280px"></div>
+            </div>
+        </div>
+    </div>
+    <!-- pie chart ends -->
+    <!-- table starts ------->
+    
+    {% if not request.user.is_superuser %}
+    <div class="box col-md-6">
+<div class="box-inner">
+<div class="box-header well" data-original-title="">
+<h2>Assigned Documents</h2>
+<div class="box-icon">
+    <a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up"></i></a>
+    <a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+</div>
+<div class="box-content">
+<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+<thead>
+<tr>
+<th>Document</th>
+<th>Content Type</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+    {% for i in exceeded %}
+    <tr>
+        <td>{% if i.headline %}{{i.headline}}{% else %}{{ i.name }}{% endif %}</td>
+        <td class="center">{% if i.get_workflow_state.content_type.name == "work flow block" %}Disorder{% else %}{{i.get_workflow_state.content_type|capfirst}}{% endif %}</td>
+        <td class="center">{{i.get_workflow_state.state.name}}</td>
+        <td class="center">
+            {% get_hash_value i.id as hashval %}
+            {% with i|to_class_name as model_name %}
+                {% if model_name == 'WorkFlowBlock' %}
+                <a class="btn btn-warning" href="/manage-section/manage-workflowblock/{{hashval}}/?hasid={{i.assign_document.hash_code}}">
+                    <i class="glyphicon glyphicon-th icon-white"></i>
+                    Take This Task
+                </a>
+                {% elif model_name == 'FAQ_Category' %}
+                <a class="btn btn-warning" href="/manage-section/manage-faq/{{hashval}}/?hasid={{i.assign_document.hash_code}}">
+                    <i class="glyphicon glyphicon-th icon-white"></i>
+                    Take This Task
+                </a>
+                {% elif model_name == 'Article' %}
+                <a class="btn btn-warning" href="/manage-section/manage-article/{{hashval}}/?hasid={{i.assign_document.hash_code}}">
+                    <i class="glyphicon glyphicon-th icon-white"></i>
+                    Take This Task
+                </a>
+                {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
+    {% endfor %}
+
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+    
+    
+    <!-- table ends -->
+</div>
+{% endif %}
+<div class="row">
+<!-- starts stack chart -->
+<div class="box col-md-12" style="width:50%;">
+    <div class="box-inner">
+    <div class="box-header well">
+        <h2><i class="glyphicon glyphicon-list-alt"></i> Overview of Published Documents</h2>
+        <div class="box-icon">
+            <a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up"></i></a>
+            <a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+        </div>
+    </div>
+    <div class="box-content">
+        <div id="chartContainer" class="center" style="height: 300px;">        
+        </div>
+    </div>
+
+</div>
+</div>
+<!-- ends stack chart -->
+
+    <!-- table starts ------->
+    
+    
+    <div class="box col-md-6">
+<div class="box-inner">
+<div class="box-header well" data-original-title="">
+<h2>Status Of Pending Documents</h2>
+<div class="box-icon">
+<a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up"></i></a>
+<a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove"></i></a>
+</div>
+</div>
+<div class="box-content">
+<table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+<thead>
+    <tr>
+        <th>Role</th>
+        <th>In Progress</th>
+        <th>Un Assigned</th>
+        <th>Reverted</th>
+    </tr>
+</thead>
+<tbody>
+    {% for i in pending_data %}
+    <tr>
+        <td>{{i.role}}</td>
+        <td class="center">{{ i.progress }}</td>
+        <td class="center">{{i.unassign}}</td>
+        <td class="center">{{i.revert}}</td>
+    </tr>
+    {% endfor %}
+
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+    <!-- table ends -->
+
+
+</div> <!-- ends second row -->
+</div>
+{% endblock %}

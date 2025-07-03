@@ -1,0 +1,121 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Section{% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+    <script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+    <script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+    <script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+    <link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+    <!-- jQuery -->
+
+    
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#id_tags').multiSelect();
+        $('#id_descriptor').jqte({linktypes: ["Web URL", "E-mail", "Picture"]});
+        $('#id_description').jqte({linktypes: ["Web URL", "E-mail", "Picture"]});
+        $('#id_text').jqte({linktypes: ["Web URL", "E-mail", "Picture"]});
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#section_form").validate({
+            rules :
+            {
+            headline : {required : true,maxlength:150, minlength:10},
+            text : {required : true,maxlength:200, minlength:10},
+            status : {required : true},
+            moved_to : {required : true},
+            },
+            messages :
+            {
+                headline : {required : "please enter headline"},
+                status : {required : "please select status"},
+                moved_to : { required : "please select moved to" },
+		    }
+        });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+<script>
+$(document).ready(function(){
+$('.jqte_toolbar').append('<div><p style="margin-top:7px" id="mycount"></p></div>');
+            $('#mycount').text('500 characters left');
+             $('.jqte_editor').bind('keyup', function(event) {
+                var max = 500;
+                var len = $('.jqte_editor').text().length
+                    if (len >= max) {
+                    $('#mycount').text(' you have reached the limit');
+                    } else {
+                            var ch = max - len;
+                            $('#mycount').text(ch + ' characters left');
+                            }
+    });
+});
+</script>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=manage-sections&art_id={{art_id}}">Section</a>
+                </li>
+                <li>
+                    Add Section
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Section</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="section_form" enctype="multipart/form-data" action = "/manage-section/edit-section/?id={{id}}&art_id={{art_id}}" method = "post">{% csrf_token %}
+                        {% else %}
+                            <form id="section_form" enctype="multipart/form-data" action = "/manage-section/add-section/" method = "post">{% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <input type="hidden" name="key" value="section" />
+                            <input type="hidden" name="atype" value="{{atype}}"/>
+                            <input type="hidden" name="art_id" value="{{art_id}}"/>
+                            <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

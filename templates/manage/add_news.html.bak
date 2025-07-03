@@ -1,0 +1,111 @@
+{% extends "manage/base.html" %}
+{% block title %} Manage News {% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+
+<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#id_tags').multiSelect();
+        $('#id_start_date').datetimepicker({format:'Y-m-d H:i',});
+        $('#id_end_date').datetimepicker({format:'Y-m-d H:i',});
+    })
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $.validator.addMethod("extension", function(value, element, param) {
+	                param = typeof param === "string" ? param.replace(/,/g, "|") : "png|jpe?g|gif";
+	                return this.optional(element) || value.match(new RegExp(".(" + param + ")$", "i"));
+                }, $.validator.format("Please enter a file with a valid extension(png|jpe/g|gif)."));
+        $("#news_form").validate({
+            rules :
+            {
+                title : {required : true},
+                image : { extension : true },
+                start_date : {required : true},
+                end_date : {required : true},
+            },
+            messages:
+            {
+                title : {required : "please enter the title"},
+            }
+        });
+     });
+</script>
+
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+{{form.media}}
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add News
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add News</h2>
+                    </div>
+                    <div class="box-content">
+                    
+                    
+                   
+                    
+                    
+                        {% if edit %}
+                        <form id="news_form" action = "/manage-section/edit-news/?news-news_id={{id_edit}}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% else %}
+                        <form id="news_form" action = "/manage-section/add-news/" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        {% endif %}
+                        {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                        {% for field in form %}
+                        <div class="input-group col-md-4">
+                            {{ field.label_tag }}
+                            <br/>
+                            {{ field }}
+                            <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                        </div>
+                    {% endfor %}
+                        <br>
+                        <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

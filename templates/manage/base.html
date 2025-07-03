@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Home | Civil Society{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="wsf, organisation, disorder, bangalore">
+    <meta name="author" content="frojgil">
+
+    <!-- The styles -->
+    <link id="bs-css" href="/static/css/bootstrap-cerulean.min.css" rel="stylesheet">
+
+    <link href="/static/css/charisma-app.css" rel="stylesheet">
+    <link href='/static/bower_components/fullcalendar/dist/fullcalendar.css' rel='stylesheet'>
+    <link href='/static/bower_components/fullcalendar/dist/fullcalendar.print.css' rel='stylesheet' media='print'>
+    <link href='/static/bower_components/chosen/chosen.min.css' rel='stylesheet'>
+    <link href='/static/bower_components/colorbox/example3/colorbox.css' rel='stylesheet'>
+    <link href='/static/bower_components/responsive-tables/responsive-tables.css' rel='stylesheet'>
+    <link href='/static/bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css' rel='stylesheet'>
+    <link href='/static/css/jquery.noty.css' rel='stylesheet'>
+    <link href='/static/css/noty_theme_default.css' rel='stylesheet'>
+    <link href='/static/css/elfinder.min.css' rel='stylesheet'>
+    <link href='/static/css/elfinder.theme.css' rel='stylesheet'>
+    <link href='/static/css/jquery.iphone.toggle.css' rel='stylesheet'>
+    <link href="/static/manage/css/multi-select.css" rel='stylesheet'>
+    <link href='/static/css/uploadify.css' rel='stylesheet'>
+    <link href='/static/css/animate.min.css' rel='stylesheet'>
+
+
+    <script src="/static/bower_components/jquery/jquery.min.js"></script>
+    <script src="/static/manage/js/jquery.session.js"></script>
+    <script src="/static/manage/js/jquery.multi-select.js"></script>
+
+    <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- The fav icon -->
+    <link rel="shortcut icon" href="/static/img/favicon.jpg">
+
+</head>
+
+<script type="text/javascript">
+function selectlang(val){
+    lang = val.value;
+    $.ajax({
+                url : "/manage-section/get-ajax-lang/",
+                type : "GET",
+                dataType: "json",
+                data :{'id':lang},
+                success: function(data)
+                {
+                    location.reload();
+                }
+            })
+        return false;
+    };
+
+</script>
+
+<body>
+
+    {% block top %}
+    <!-- topbar starts -->
+    <div class="navbar navbar-default" role="navigation">
+        <div class="navbar-inner">
+            <button type="button" class="navbar-toggle pull-left animated flip">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!-- user dropdown starts -->
+            <ul class="collapse navbar-collapse nav navbar-nav top-menu">
+                <li class="dropdown">
+                    
+                </li>
+                <!--li>
+                    <form class="navbar-search pull-left">
+                        <input placeholder="Search" class="search-query form-control col-md-10" name="query" type="text">
+                    </form>
+                </li-->
+            </ul>
+            <!-- user dropdown starts -->
+            <div class="btn-group">
+                <button class="btn btn-default dropdown-toggle normal_btn" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-user blue_normal"></i><span class="hidden-sm hidden-xs"> {{ request.user.username }}</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="/adm/logout/">Logout</a>
+                    </li>
+                </ul>
+            </div>
+            <span style="color:#fff">Welcome, {{ request.user.username }}</span>
+            <!-- user dropdown ends -->
+            <a class="navbar-brand" href="/manage-home/">
+                <img alt="Charisma Logo" src="/static/img/civil_society_logo.png" class="hidden-xs" />
+            </a>
+
+        </div>
+    </div>
+    <!-- topbar ends -->
+
+    {% endblock %} {% block content %} 
+
+
+
+    <div class="ch-container">
+
+        <div class="row">
+            <!-- left menu starts -->
+            <div class="col-sm-2 col-lg-2">
+           {% if request.user.is_superuser %}
+                <div class="sidebar-nav">
+                    <div class="nav-canvas">
+                        <div class="nav-sm nav nav-stacked">
+
+                        </div>
+<!--                        <ul class="nav nav-pills nav-stacked main-menu dash_board">-->
+<!--                            <li><a class="ajax-link" href="/manage-section/dashboard/"><span> Dashboard</span><i class="glyphicon glyphicon-home"></i></a></li>-->
+<!--                           -->
+<!--                    -->
+<!--<!--                            <li><a class="ajax-link" href="/manage/?key=workflowblock&publish=submitteddocuments"><i class="glyphicon glyphicon-book grey1"></i><span>New Idea Requests</span></a>-->
+<!--<!--                            -->
+<!--<!--                            {% if not request.user.is_superuser %}-->
+<!--<!--                            <li class="accordion">-->
+<!--<!--                                <a href="#"><span> My Ideas </span><i class="glyphicon glyphicon-book grey1"></i></a>-->
+<!--<!--                                <ul class="nav nav-pills nav-stacked sub_acc">-->
+<!--<!--                                    <li><a href="/manage/?key=workflowblock&publish=submitted">Submitted</a></li>-->
+<!--<!--                                    <li><a href="/manage/?key=workflowblock&publish=nonsubmitted">Not Submitted</a></li>-->
+<!--<!--                                </ul>-->
+<!--<!--                            </li>-->
+<!--<!--                            {% endif %}-->
+<!--<!--                            <li><a class="ajax-link" href="/manage/?key=workflowblock&publish=inprocess"><i class="glyphicon glyphicon-book grey1"></i><span> Map My Document Progress </span></a>-->
+<!--<!--                            </li>-->
+<!--                            <li><a class="ajax-link" href="/manage/?key=workflowblock&publish=portal"><i class="glyphicon glyphicon-book grey1"></i><span> Documents ready to publish on portal</span></a>-->
+<!--                            </li>-->
+<!--                            <li><a class="ajax-link" href="/manage/?key=workflowblock&publish=True"><i class="glyphicon glyphicon-book grey1"></i> <span>Published Documents</span></a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+                    </div>
+                </div>
+            <br>
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+            <div class="sidebar-nav">
+                <div class="nav-canvas">
+                    <div class="nav-sm nav nav-stacked">
+
+                    </div>
+                    <ul class="nav nav-pills nav-stacked main-menu admin1">
+                        <li class="nav-header">Administration</li>
+                        <li><a class="ajax-link" href="/manage/?key=article"><span>Articles</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                        <!--li class="accordion">
+                            <a href="#"><span> Social </span><i class="glyphicon glyphicon-globe"></i></a>
+                            <ul class="nav nav-pills nav-stacked sub_acc">
+                                <li><a href="/manage/?key=news">News</a></li>
+                                <li><a href="/manage/?key=videos">Videos</a></li>
+                            </ul>
+                        </li-->
+                        <li><a class="ajax-link" href="/manage/?key=ads"><span>Ads</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                        <li><a class="ajax-link" href="/manage/?key=gallery"><span>Gallery</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                        <li><a class="ajax-link" href="/manage/?key=our_banners"><span>Home Banners</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                        <li><a class="ajax-link" href="/manage/?key=aboutus"><span>AboutUs</span><i class="glyphicon glyphicon-picture"></i></a></li>
+<!--                        <li class="accordion">-->
+<!--                            <a href="/manage/?key=our_banners"> <i class="glyphicon glyphicon-book grey1"></i>  <span>About Us</span>-->
+<!--                            </a>-->
+<!--                            <ul class="nav nav-pills nav-stacked">-->
+<!--                                <li><a href="/manage/?key=our_banners">Banners</a></li>-->
+<!--                                <!--li><a href="/manage/?key=article">Articles</a></li-->
+<!--                            </ul>-->
+<!--                        </li>-->
+                            <!--li class="accordion">
+                                <a href="#"> <i class="glyphicon glyphicon-book grey1"></i>  <span>Columns</span>
+                                </a>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="/manage/?key=es_profile">Experts Profile</a></li>
+                                    <li><a href="/manage/?key=experts_speak">Experts Speak</a></li>
+                                </ul>
+                            </li-->
+                            <li><a class="ajax-link" href="/manage/?key=frontmenu"><span>Front Menu</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=comments&pub=True"><span>Published Comments</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=comments&pub=False"><span>UnPublished Comments</span><i class="glyphicon glyphicon-picture"></i></a></li>
+
+                            <li><a class="ajax-link" href="/manage/?key=archive"><span>Archive</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=photofeature"><span>Photo Feature</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=photofeatureimage"><span>Photo Feature Images</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=columncategory"><span>Column Category</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=columnists"><span>Columnists</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=columns"><span>Columns</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=currentissue"><span>Current Issue</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=subscription"><span>Subscriptions</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=writetous"><span>Enquiries</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=newsletter"><span>Newsletters</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            <li><a class="ajax-link" href="/manage/?key=editor"><span>Editors</span><i class="glyphicon glyphicon-picture"></i></a></li>
+                            
+                        <li class="accordion">
+                            <a href="#"><span> User Management </span><i class="glyphicon glyphicon-user"></i></a>
+                            <ul class="nav nav-pills nav-stacked sub_acc">
+                                <li><a href="/manage/?key=user">User</a></li>
+<!--                                <li><a href="/menu-management/admin-user/list/">Admin User</a></li>-->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <!--/span-->
+
+
+            <noscript>
+                <div class="alert alert-block col-md-12">
+                    <h4 class="alert-heading">Warning!</h4>
+
+                    <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a>
+                        enabled to use this site.</p>
+                </div>
+            </noscript>
+            <div id="content" class="col-lg-10 col-sm-10">
+                <!-- content starts -->
+                <div>
+
+                    <div style="clear:both;"></div>
+                    {% block rightcontent %}{% endblock %}
+                    <!-- content ends -->
+                </div>
+                <!--/#content.col-md-0-->
+            </div>
+            <!--/fluid-row-->
+
+
+
+            <hr>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">×</button>
+                            <h3>Settings</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>Here settings can be configured...</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
+                            <a href="#" class="btn btn-primary" data-dismiss="modal">Save changes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endblock %} {% block footer %}
+
+            <footer class="row" style="margin-right:0px">
+                <p class="col-md-9 col-sm-9 col-xs-12 copyright"></p>
+
+                <p class="col-md-3 col-sm-3 col-xs-12 powered-by">Designed by: <a href="http://mahiti.org" target="_blank">Mahiti.org</a>
+                </p>
+
+            </footer>
+            {% endblock %}
+        </div>
+        <!--/.fluid-container-->
+        <!-- external javascript -->
+        <!-- chart libraries start -->
+        <script src="/static/bower_components/flot/excanvas.min.js"></script>
+        <script src="/static/bower_components/flot/jquery.flot.js"></script>
+        <script src="/static/bower_components/flot/jquery.flot.pie.js"></script>
+        <script src="/static/bower_components/flot/jquery.flot.stack.js"></script>
+        <script src="/static/bower_components/flot/jquery.flot.resize.js"></script>
+        <!-- chart libraries end -->
+        <script src="/static/js/init-chart.js"></script>
+
+        <!-- external javascript -->
+
+        <script src="/static/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <!-- library for cookie management -->
+        <script src="/static/js/jquery.cookie.js"></script>
+        <!-- calender plugin -->
+        <script src='/static/bower_components/moment/min/moment.min.js'></script>
+        <script src='/static/bower_components/fullcalendar/dist/fullcalendar.min.js'></script>
+        <!-- data table plugin -->
+        <script src='/static/js/jquery.dataTables.min.js'></script>
+
+        <!-- select or dropdown enhancer -->
+        <script src="/static/bower_components/chosen/chosen.jquery.min.js"></script>
+        <!-- plugin for gallery image view -->
+        <script src="/static/bower_components/colorbox/jquery.colorbox-min.js"></script>
+        <!-- notification plugin -->
+        <script src="/static/js/jquery.noty.js"></script>
+        <!-- library for making tables responsive -->
+        <script src="/static/bower_components/responsive-tables/responsive-tables.js"></script>
+        <!-- tour plugin -->
+        <script src="/static/bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+        <!-- star rating plugin -->
+        <script src="/static/js/jquery.raty.min.js"></script>
+        <!-- for iOS style toggle switch -->
+        <script src="/static/js/jquery.iphone.toggle.js"></script>
+        <!-- autogrowing textarea plugin -->
+        <script src="/static/js/jquery.autogrow-textarea.js"></script>
+        <!-- multiple file upload plugin -->
+        <script src="/static/js/jquery.uploadify-3.1.min.js"></script>
+        <!-- history.js for cross-browser state change on ajax -->
+        <script src="/static/js/jquery.history.js"></script>
+        <!-- application script for Charisma demo -->
+        <script src="/static/js/charisma.js"></script>
+
+
+</body>
+
+</html>

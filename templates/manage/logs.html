@@ -1,0 +1,129 @@
+
+
+
+
+
+
+{% extends "manage/base.html" %}
+{% load wsf_tags %}
+{% block title %}WorkFlow Article Logs{% endblock %}
+
+
+{% block rightcontent %}
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=workflowblock">WorkFlow Blocks</a>
+                </li>
+                {% get_hash_value article.block.id as articlehashval %}
+                <li>
+                    <a href="/manage-section/manage-workflowblock/{{articlehashval}}/">{{article.block.name}}</a>
+                </li>
+                <li>
+                    {{ article.name }}
+                </li>
+                <li>
+                    Logs
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>WorkFlow Article Logs</h2>
+                    </div>
+
+                    <div class="box-content">
+
+                            <div class="box col-md-9" style="width:100%">
+       {% for his in history %}
+        <div class="box-inner">
+            <div class="box-header well" data-original-title="">
+                <h2><i class="glyphicon glyphicon-list-alt"></i> Log {{ his.revision }} By {{ his.user.first_name }} {{ his.user.last_name }} ( {{his.action_display}} ) on {{ his.action_time }}</h2>
+
+                <div class="box-icon">
+                    <a href="#" class="btn btn-minimize btn-round btn-default"><i class="glyphicon glyphicon-chevron-up blue"></i></a>
+                    <a href="#" class="btn btn-close btn-round btn-default"><i class="glyphicon glyphicon-remove blue"></i></a>
+                </div>
+            </div>
+            <div class="box-content" style="display: block;">
+                <div class="row ">
+                           <div class="col-md-4">
+                                    <!-- SUMMARY ------------>
+                                    <table class="table table-bordered responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>Before</th>
+                                                    <th>After</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for key,val in his.get_data.items %}
+                                                {% if key == "summary" %}
+                                                    <tr>
+                                                        <td colspan = "2"> <b>Summary</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ val.0|safe }}</td>
+                                                        <td>{{ val.1|safe }}</td>
+                                                    </tr>
+                                                {% elif key == "description" %}
+                                                    <tr>
+                                                        <td colspan = "2"> <b>Description</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ val.0|safe }}</td>
+                                                        <td>{{ val.1|safe }}</td>
+                                                    </tr>
+                                                {% elif key == "name" %}
+                                                    <tr>
+                                                        <td colspan = "2"> <b>Name</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <tr>
+                                                        <td>{{ val.0|safe }}</td>
+                                                        <td>{{ val.1|safe }}</td>
+                                                    </tr>
+                                                    </tr>
+                                                {% elif key == "article_status" %}
+                                                    {% if val.1 %}
+                                                    <tr>
+                                                        <td colspan = "2"> <b>Status Of Article</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        {% if val.0 %}
+                                                            {% get_status_by_id val.0 as fstate %}
+                                                        {% endif %}
+                                                        {% if val.1 %}
+                                                            {% get_status_by_id val.1 as sstate %}
+                                                        {% endif %}
+                                                        <td>{{ fstate.name }}</td>
+                                                        <td>{{ sstate.name }}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                            </div>
+                </div>
+                <!--/row -->
+            </div>
+        </div>
+        {% endfor %}
+
+            
+            
+            </div>
+            <!--/row-->
+
+            </div>
+
+{% endblock %}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Civil Society</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link href='http://fonts.googleapis.com/css?family=Lustria|Open+Sans:400,800,400italic,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/frontend/css/bootstrap_forsite.css">
+    <link rel="stylesheet" href="/static/frontend/css/slicknav.css">
+    <link rel="stylesheet" href="/static/frontend/css/main.css">
+    <script src="/static/frontend/js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <div class="login-logo">
+        <a href="/"><img src="/static/frontend/img/mobile-logo.jpg" alt="Home" /></a>
+    </div>
+    <div class="login-div">
+        <div class="clearfix pos-rel">
+            <div class="act_div">
+                <form action="/login/{% if next %}?next={{next}}{% endif %}" method="POST">{% csrf_token %}
+                    <input type="hidden" name="form" value="signup">
+                    <ul>
+                        <li><strong>Sign up</strong>
+                        </li>
+                        <li>
+                            <input type="text" placeholder="Full Name" name="name" class="input_type" required/>
+                        </li>
+                        <li>
+                            <input type="email" placeholder="Email" name="email" class="input_type" required/>
+                        </li>
+                        <li>
+                            <input type="password" placeholder="Password" name="password" class="input_type" required/>
+                        </li>
+                        <li><span class="close_div login-btn">Cancel</span> 
+                            <input type="submit" value="Submit" class="login-btn" />
+                        </li>
+                    </ul>
+                </form>
+
+            </div>
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12 bor-mail">
+                <div class="row">
+                    <ul class="connect-withh">
+                        <li><strong>New user? &nbsp;&nbsp;Sign up</strong></li>
+                        <li><a href="{% provider_login_url 'google' %}"><span>Continue With Google</span></a></li>
+                        <li><a href="{% provider_login_url 'facebook' %}"><span>Continue With Facebook</span></a></li>
+<!--                        <li><a href="#" class="open_div"><span>Continue With Email</span></a>-->
+<!--                        </li>-->
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
+                <div class="row">
+                    <div class="login-details">
+                        <form action="/login/{% if next %}?next={{next}}{% endif %}" method="POST">{% csrf_token %}
+                            <input type="hidden" name="form" value="login">
+                            <ul>
+                                <li><strong>Already a registered user ?  &nbsp;&nbsp;Login</strong></li>
+                                <li>
+                                    <input type="text" placeholder="Email" name="email" class="input_type" required/>
+                                </li>
+                                <li>
+                                    <input type="password" placeholder="Password" name="password" class="input_type" required/>
+                                </li>
+                                <li>
+                                    <input type="submit" value="Submit" class="login-btn" />
+                                </li>
+                                <li>
+                                    <strong><a href="/password/reset/" class="t_div">Forgot password?</a></strong>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if msg %}{{msg}}{% endif %}
+    </div>
+    <script>
+        window.jQuery || document.write('<script src="/static/frontend/js/vendor/jquery-1.10.2.min.js"><\/script>')
+    </script>
+    <script src="/static/frontend/js/bootstrap.min.js"></script>
+    <script src="/static/frontend/js/plugins.js"></script>
+    <script src="/static/frontend/js/jquery.slicknav.min.js"></script>
+    <script src="/static/frontend/js/main.js"></script>
+    <script>
+        $('.carousel').carousel({
+            interval: 4000
+        })
+
+         $('.carousel .item').each(function () {
+            var next = $(this).next();
+            if (!next.length) {
+                next = $(this).siblings(':first');
+            }
+            next.children(':first-child').clone().appendTo($(this));
+
+            if (next.next().length > 0) {
+                next.next().children(':first-child').clone().appendTo($(this));
+            } else {
+                $(this).siblings(':first').children(':first-child').clone().appendTo($(this));
+            }
+        });
+    </script>
+    <script src="/static/frontend/js/jquery.cycle2.min.js"></script>
+    <script src="/static/frontend/js/jquery.slicknav.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#menu').slicknav();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".open_div").on('click touchend', function (e) {
+                e.preventDefault(); <!-- to prevent default link value of a for eg: href="#" -->
+
+                $(".act_div").fadeIn()
+            });
+
+            $(".close_div").on('click touchend', function () {
+
+                $(".act_div").fadeOut();
+            });
+        });
+    </script>
+</body>
+
+</html>

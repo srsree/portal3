@@ -1,0 +1,105 @@
+{{ form.media }}
+{{ form1.media }}
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+</script>
+
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+	<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keyword').tagsInput({width:'auto'});
+		    $('#id_date_added').datetimepicker({format:'Y-m-d H:i',});
+	    });
+    });
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#id_related_article').multiSelect({});
+        $("#faq_form").validate({
+            rules :
+            {
+            question : {required : true},
+            },
+
+        });
+    });
+</script>
+<div class="row" id ="edit_form">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>{{ article.name }}</h2>
+                        <div class="box-icon">
+
+                        <a href="#" class="glyphicon glyphicon-remove" onclick="return load_page();">Close</a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        {% if add %}
+                            <form id="faq_form" method = "POST" onsubmit="return add_question();">{% csrf_token %}
+                        {% else %}
+                            <form id="faq_form" method = "POST" onsubmit="return save_question({{ question.id }});">{% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red;"><b>{{error}}</b></p>{% endif %}
+                            {% if add %}
+                            <!--div class="checkbox">
+                                <label><input type="radio" name="where_to_add" value="after" style="height:20px;">After</label>
+                                <label><input type="radio" name="where_to_add" value="before" style="height:20px;">Before</label>
+                            <select name="art_to_add">
+                                <option value=""> Select Section </option>
+                                {% for i in articleblock.get_articles %}
+                                <option value="{{ i.id }}">{{ i.name }}</option>
+                                {% endfor %}
+                            <select>
+                            </div-->
+                            {% endif %}
+                            {% for field in form %}
+                            <div class="form-group1">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            {% for field in form1 %}
+                            <div class="form-group1">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <div class="form-group1">
+                                <button type="submit" class="btn btn-default mbtn">Submit</button>
+                                <a href="#" class="btn btn-default mbtn" data-dismiss="modal" onclick="return load_page();">Close</a>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,403 @@
+{% extends "manage/base.html" %}
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+{% load wsf_tags %}
+{% load template_tags %}
+{% block title %}Manage FAQ{% endblock %}
+
+{% block rightcontent %}
+{% get_hash_value obj.id as arthashval %}
+
+<script type="text/javascript">
+
+    function edit_form(aid){
+        $.ajax({
+               type:'GET',
+               url:"/manage-section/get-edit-faq/",
+               data:{'aid':aid},
+               success:function(data){
+                $('#edit_form').replaceWith(data);
+               }
+       });
+    }
+</script>
+<script type="text/javascript">
+
+    function add_form(val){
+        var div_id = $('#add_form');
+        $.ajax({
+               type:'GET',
+               url:"/manage-section/get-add-faqques-ans/"+val+"/",
+               success:function(data){
+                $( div_id ).replaceWith(data);
+               }
+       });
+    }
+
+    function move_form(val, key){
+        var div_id = $('#move_form');
+        var key = key;
+        $.ajax({
+               type:'GET',
+               data : {'key':key},
+               url:"/manage-section/get-move-faq/"+val+"/",
+               success:function(data){
+                $( div_id ).html(data);
+               }
+       });
+    }
+    function publish_form(val, model){
+        var r = confirm("Are you sure want to publish?");
+        if (r == true) {
+            var val = val;
+            $.ajax({
+                   type:'GET',
+                   data : {'model':model},
+                   url:"/manage-section/publish-wflowblock/"+val+"/",
+                   success:function(data){
+                    alert(data['msg']);
+                    window.location.reload();
+                   }
+           });
+        } else {
+            txt = "You pressed Cancel!";
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $.fn.serializeObject = function(){
+         var o = {};
+         var a = this.serializeArray();
+         $.each(a, function() {
+             if (o[this.name]) {
+                 if (!o[this.name].push) {
+                     o[this.name] = [o[this.name]];
+                 }
+                 o[this.name].push(this.value || '');
+             } else {
+                 o[this.name] = this.value || '';
+             }
+         });
+         return o;
+      };
+
+    function save_article(val){
+        var aid = val;
+        var post_data = $('#user_form').serializeObject();
+        $.ajax({
+               type:'POST',
+               data : post_data,
+               url:"/manage-section/save_faq/"+aid+"/",
+               success:function(data){
+                    window.location.reload();
+               }
+       });
+       return false;
+    }
+
+    function save_question(val){
+        var aid = val;
+        var value = CKEDITOR.instances['id_answer'].getData();
+        var post_data = $('#faq_form').serializeObject();
+        post_data['answer'] = value;
+        $.ajax({
+               type:'POST',
+               data : post_data,
+               url:"/manage-section/edit-faqquestion/"+aid+"/",
+               success:function(data){
+                    window.location.reload();
+               }
+       });
+       return false;
+    }
+
+    function edit_question(val, aid){
+        var div_id = $('#edit_form_'+val);
+        $.ajax({
+               type:'GET',
+               url:"/manage-section/get-edit-faqquestion/",
+               data:{'aid':aid},
+               success:function(data){
+                $( div_id ).replaceWith(data);
+               }
+       });
+    }
+
+    function add_question(){
+        var aid = {{obj.id}};
+        var value = CKEDITOR.instances['id_answer'].getData();
+        var post_data = $('#faq_form').serializeObject();
+        post_data['answer'] = value;
+        $.ajax({
+               type:'POST',
+               data : post_data,
+               url:"/manage-section/add-faqquestion/"+aid+"/",
+               success:function(data){
+                    alert('added Successfully..')
+                    window.location.reload();
+               }
+       });
+       return false;
+    }
+
+    function add_ref_art(val){
+        $('#changeartid').val(val);
+        $('select[name=art_to_change] option[value='+val+']').hide();
+    }
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        $('#clsbtn').on('click', function(){
+            $('select[name=art_to_change]').find('option').each(function(){
+                $(this).show();
+            });
+            $('select[name=art_to_change]').val('')
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    function submit_move_change(){
+        var abid = {{obj.id}};
+        var refartid = $('#changeartid').val();
+        var where_to_change = $('#where_to_change').val();
+        var sel_art = $('#art_to_change').val();
+        $.ajax({
+               type:'GET',
+               data : {'aid':abid, 'refartid':refartid, 'where_to_change':where_to_change, 'sel_art':sel_art},
+               url:"/manage-section/move-up-down-wflowarticle/",
+               success:function(data){
+                    alert('Moved Successfully...');
+                    window.location.reload();
+               }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function publish_art(task, val){
+        var tsk = task;
+        var aid = val;
+        $.ajax({
+            type:'GET',
+            data :{'task':tsk, 'aid':aid},
+            url:"/manage-section/publish-unpublish/",
+            success:function(data){
+                alert('changed Successfully');
+                window.location.reload();
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function load_page(){
+        window.location.reload();
+    }
+</script>
+
+
+<div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/manage/">Home</a>
+                </li>
+                <li>
+                    {{ obj.name }}
+                </li>
+            </ul>
+        </div>
+            {% get_has_permission request obj "add" as add_perm %}
+            {% get_has_permission request obj "move" as move_perm %}
+            {% get_has_permission request obj "edit" as edit_perm %}
+            {% get_has_permission request obj "delete" as delete_perm %}
+            {% get_has_permission request obj "revert" as revert_perm %}
+            {% get_has_permission request obj "publish" as publish_perm %}
+            {% get_assigned_perm obj obj.get_workflow_state.state as get_assign %}
+            {% if not obj.doc_type == 'idea' %}
+            <h3 class="animated zoomIn" style="float:left;">Current State : {% if obj.get_workflow_state.prev_status %}
+                    {% if obj.get_workflow_state.prev_status.name == 'Writer' %}Writing
+                    {% elif obj.get_workflow_state.prev_status.name == 'Quality Checker' %}Quality Checking
+                    {% elif obj.get_workflow_state.prev_status.name == 'Sub Editor' %}Sub Editing
+                    {% else %}{{ obj.get_workflow_state.prev_status.name }}
+                    {% endif %}to 
+                {% endif %}
+                {% if obj.get_workflow_state.state.name == 'Writer' %}Writing
+                    {% elif obj.get_workflow_state.state.name == 'Quality Checker' %}Quality Checking
+                    {% elif obj.get_workflow_state.state.name == 'Sub Editor' %}Sub Editing
+                    {% else %}{{ obj.get_workflow_state.state.name }}
+                {% endif %}
+            <br/>
+            <br/>
+            FAQ Name: {{obj.name}}</h3>
+            {% else %}
+                <h3>FAQ Name: {{obj.name}}</h3>
+            {% endif %}
+            {% if get_assign %}
+                <input type="hidden" name="hashcode" value="{{ get_assign.hashcode }}" id="hashcodeval">
+            {% endif %}
+            {% if not request.user.is_superuser %}
+            {% if get_assign.userid == request.user.id %}
+                {% if edit_perm %}
+                <button class="btn btn-primary btn-sm" style="float:right;" onclick="return add_form({{ obj.id }});"><i class="glyphicon glyphicon-plus"></i> Add Question and Answer</button>
+                {% endif %}
+                <!-- ###### Move or Publish Section ######## -->
+                    {% if nxt_state %}
+                        {% if nxt_state.name == "Published" %}
+                            {% if publish_perm %}
+                        <button class="btn btn-warning btn-sm" style="float:right;" onclick="return publish_form({{ obj.id }}, '{% with obj|to_class_name as model_name %}{{ model_name }}{% endwith %}');" title="Publish the Article"left"." data-toggle="tooltip">Publish <i class="glyphicon glyphicon-arrow-right"></i></button>
+                        {% endif %}
+                  
+                        {% else %}
+                        {% if move_perm %}
+                            <button class="btn btn-warning btn-sm" style="float:right;" onclick="return move_form({{ obj.id }}, 'move');" title="Move to Next level called '{{ nxt_state.name }}'"left"." data-toggle="tooltip">Move To Next Level<i class="glyphicon glyphicon-arrow-right"></i></button>
+                        {% endif %}
+                        {% endif %}
+
+                    {% endif %}
+
+                 <!-- ###### Revert Back Section ######## -->
+                    {% if prev_state %}
+                        {% if revert_perm %}
+                        <button class="btn btn-danger btn-sm" style="float:right;" onclick="return move_form({{ obj.id }}, 'revert');" title="Revert back to Previous level called '{{ prev_state.name }}'"left"." data-toggle="tooltip"><i class="glyphicon glyphicon-arrow-left"></i> revert</button>
+                        {% endif %}
+
+                    {% endif %}
+            {% elif obj.doc_type == 'idea'%}
+            
+            {% else %}
+
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>Permission denied to access this document</strong>
+                </div>
+
+            {% endif %}
+
+            {% endif %}
+            <!-- ################ Super user section ############## -->
+            {% if request.user.is_superuser and obj.doc_type == 'organization-idea' %}
+                <button class="btn btn-primary btn-sm" style="float:right;" onclick="return add_form({{ obj.id }});"><i class="glyphicon glyphicon-plus"></i> Add Question and Answer</button>
+                {% get_hash_value articleblock.id as hashval %}
+                    <a href="/manage-section/edit-faq-category/?faq_id={{obj.id}}&disp=True">
+                    <button class="btn btn-warning btn-sm" style="float:right;">Edit <i class="glyphicon glyphicon-arrow-up"></i></button>
+                    </a>
+                {% if not obj.get_workflow_state.state.name == 'Published' %}
+                <button class="btn btn-success btn-sm" style="float:right;" onclick="return publish_form({{ obj.id }}, '{% with obj|to_class_name as model_name %}{{ model_name }}{% endwith %}');" title="Publish the Article"left"." data-toggle="tooltip">Publish <i class="glyphicon glyphicon-arrow-up"></i></button>
+                {% endif %}
+                <button class="btn btn-warning btn-sm" style="float:right;" onclick="return move_form({{ obj.id }}, 'assign');" title="Assign to Any level"left"." data-toggle="tooltip"><i class="glyphicon glyphicon-arrow-left"></i>Assign To Any Level <i class="glyphicon glyphicon-arrow-right"></i></button>
+            {% endif %}
+            {% is_a_content_senior request as cs %}
+            {% if obj.doc_type == 'idea' %}
+                <button class="btn btn-primary btn-sm" style="float:right;" onclick="return add_form({{ obj.id }});"><i class="glyphicon glyphicon-plus"></i> Add Question and Answer</button>
+                {% if obj.get_submitted_document and cs %}
+                    <button class="btn btn-warning btn-sm" style="float:right;" onclick="return move_form({{ obj.id }}, 'assign');" title="Assign to Any level"left"." data-toggle="tooltip"><i class="glyphicon glyphicon-arrow-left"></i>Assign To Any Level <i class="glyphicon glyphicon-arrow-right"></i></button>
+                {% endif %}
+            {% endif %}
+        <div id="add_form"></div>
+        <div id="move_form"></div>
+
+
+        {% for art in obj.get_questions %}
+        {% get_hash_value art.id as hashval %}
+        <div class="row" id ="edit_form_{{forloop.counter}}">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>{{ art.question }}</h2>
+                        <div class="box-icon">
+                        {% if not obj.doc_type == 'idea' %}
+                            {% if art.is_active %}
+                                <a href="#" class="glyphicon glyphicon-share-alt"> Visible | </a>
+                            {% else %}
+                                <a href="#" class="glyphicon glyphicon-share-alt">Hidden | </a>
+                            {% endif %}
+                        {% endif %}
+                                <!-- Move up / down section -->
+                        {% if get_assign.userid == request.user.id %}
+                            {% if edit_perm %}
+                            <!-- Edit section -->
+                            <a href="#" class="glyphicon glyphicon-edit" onclick = "return edit_question({{forloop.counter}},{{ art.id }} );">Edit </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if request.user.is_superuser or obj.doc_type == 'idea' %}
+                            {% if edit_perm %}
+                            <!-- Edit section -->
+                            <a href="#" class="glyphicon glyphicon-edit" onclick = "return edit_question({{forloop.counter}},{{ art.id }} );">Edit </a>
+                            {% endif %}
+                        {% endif %}
+
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>{{ art.question }}</h4>
+                                <h5></h5>
+                                <p>{% for i in art.get_answer %}{{ i.answer|safe }}{% endfor %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>Change Position</h3>
+                </div>
+                <div class="modal-body">
+                        {% for field in form %}
+                            <label class="control-label" for="selectError">{{field.name}}</label>
+                            {{field}}<br/>
+                        {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal" id="clsbtn">Close</a>
+                    <a href="#" class="btn btn-primary" data-dismiss="modal" onclick="return submit_move_change();">Save changes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>Move To Next Level : "{{ nxt_state.name }}"</h3>
+                </div>
+                <div class="modal-body">
+                        <label class="control-label" for="selectError">Where to Change</label>
+                        <select id="where_to_change" name="where_to_change">
+                            <option value="after">After</option>
+                            <option value="before">Before</option>
+                        </select>
+                        <br/>
+                        <label class="control-label" for="selectError">Select Section</label>
+                        <input type="hidden" name="changeartid" value="" id="changeartid">
+                        <select id="art_to_change" name="art_to_change">
+                            <option value="">---------</option>
+                            {% for art in obj.get_articles %}
+                                <option value="{{ art.id }}">{{ art.name }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal" id="clsbtn">Close</a>
+                    <a href="#" class="btn btn-primary" data-dismiss="modal" onclick="return submit_move_change();">Save changes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load front_tags %}
+{% block title %}Subscribe - {% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript">    
+    $( "ul li:nth-child(3)" ).attr('id', 'active_menu');
+    $( "ul li:nth-child(1)" ).attr('id', 'active_menu2');
+</script>
+
+<link href="/static/new-subscribe/css/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/new-subscribe/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">  
+{% endblock %}
+
+{% block left%}
+<div class="row">
+    <div class="container">
+        <div class="row">
+            <div class="subscribetext1">
+                Subscribe now and discover a new India
+            </div>
+        </div>
+        <div class="row">
+            <div class="subscribetext2">
+                Choose your subscription to <span class="note">Civil Society</span> magazine
+            </div>
+        </div>
+        
+        <div class="col-md-4 " align="center">
+            <div class="optionbox"> 
+             <div class="yeartext1">One Year Digital</div>
+             <div class="imagebox1"><img src="/static/new-subscribe/images/civilsociety_image001.jpg"></div>
+             <div class="countrytext1">INDIA</div>
+             <div class="redpricebtn1"><a href="/subscribe/?sub=ind-1">Rs 700</a></div>
+             <div class="countrytext1">INTERNATIONAL</div>
+             <div class="redpricebtn1"><a href="/subscribe/?sub=int-1">$ 12</a></div>
+            </div>   
+        </div>
+        
+        <div class="col-md-4 " align="center">
+            <div class="optionbox"> 
+             <div class="yeartext1">One Year Print + Digital</div>
+             <div class="imagebox1"><img src="/static/new-subscribe/images/civilsociety_image001.jpg"></div>
+             <div class="countrytext1">INDIA</div>
+             <div class="basicbox1">  
+             <div class="redpricebtn1"><a href="/subscribe/?sub=ind-5">Individual: Rs 1200</a></div>
+             </div>
+             <div class="redpricebtn1"><a href="/subscribe/?sub=ind-6">Institutions: Rs 1400</a></div>
+             <div class="countrytext1">INTERNATIONAL</div>
+             <div class="redpricebtn1"><a href="/subscribe/?sub=int-2">$ 50</a></div>
+            </div>   
+        </div>
+        
+        <div class="col-md-4 " align="center">
+            <div class="optionbox"> 
+             <div class="yeartext1">Donate to Civil Society & support original journalism</div>
+             <div class="imagebox1"><img src="/static/new-subscribe/images/civilsociety_image001.jpg"></div>
+             <div class="basicbox1" style="margin-top:15px;">
+             <div class="redpricebtn1"><a href="/subscribe/?sub=ind-7">Rs 5000</a></div>
+             </div>
+             <div class="redpricebtn1"><a href="/subscribe/?sub=ind-8">Rs 10000</a></div>
+             <div class="countrytext1">FREE : A copy of Civil Society’s 
+coffee table book <span style="font-style: italic; font-waight:800;">Inventive Indians</span></div>
+            </div>   
+        </div>
+        
+        
+    </div>
+</div>
+{% endblock %}
+{% block right %}
+
+{% endblock %}

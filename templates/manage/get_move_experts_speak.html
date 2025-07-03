@@ -1,0 +1,231 @@
+{{ form.media }}
+{% load template_tags %}
+
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+	<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+
+
+<script type="text/javascript">
+	function select_state_user(sel){
+        var val = sel.value;
+	    $.ajax({
+	        method : 'GET',
+	        data:{'sid':val},
+	        url:"/manage-section/get-move-state-users/",
+	        success:function(data){
+               $('#assigners_span').html(data);
+               load_Select();
+           }
+	    })
+	}
+</script>
+<script>
+    function load_Select(){
+        $('input').addClass('form-control');
+        $('#assigners').multiSelect({
+            selectableHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+            selectionHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+            afterInit: function(ms){
+            var that = this,
+                $selectableSearch = that.$selectableUl.prev(),
+                $selectionSearch = that.$selectionUl.prev(),
+                selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+            that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+            .on('keydown', function(e){
+              if (e.which === 40){
+                that.$selectableUl.focus();
+                return false;
+              }
+            });
+
+            that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+            .on('keydown', function(e){
+              if (e.which == 40){
+                that.$selectionUl.focus();
+                return false;
+              }
+            });
+          },
+          afterSelect: function(){
+            this.qs1.cache();
+            this.qs2.cache();
+          },
+          afterDeselect: function(){
+            this.qs1.cache();
+            this.qs2.cache();
+          }
+        });
+        $('#select-all').click(function(){
+          $('#assigners').multiSelect('select_all');
+          return false;
+        });
+        $('#deselect-all').click(function(){
+          $('#assigners').multiSelect('deselect_all');
+          return false;
+        });
+    }
+
+</script>
+<script type="text/javascript">
+
+    $.fn.serializeObject = function(){
+         var o = {};
+         var a = this.serializeArray();
+         $.each(a, function() {
+             if (o[this.name]) {
+                 if (!o[this.name].push) {
+                     o[this.name] = [o[this.name]];
+                 }
+                 o[this.name].push(this.value || '');
+             } else {
+                 o[this.name] = this.value || '';
+             }
+         });
+         return o;
+      };
+
+    function move_articleblock(form, val, key, model){
+        var aid = val;
+        var post_data = $(form).serialize();
+        var gethashval = $('#hashcodeval').val();
+        post_data['key'] = key;
+        post_data['model'] = model;
+        post_data['gethashval'] = gethashval;
+        //console.log(post_data);
+        $.ajax({
+               type:'POST',
+               data : post_data,
+               url:"/manage-section/move-wflowblock/"+aid+"/?key="+key+"&model="+model,
+               success:function(data){
+                    alert('updated successfully');
+                    window.location.reload();
+               }
+       });
+       return false;
+    }
+</script>
+<script>
+        $(document).ready(function(){
+            $('#assigners').multiSelect({
+                selectableHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+                selectionHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+                afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+            $('#select-all').click(function(){
+              $('#assigners').multiSelect('select_all');
+              return false;
+            });
+            $('#deselect-all').click(function(){
+              $('#assigners').multiSelect('deselect_all');
+              return false;
+            });
+        });
+    </script>
+
+
+<div class="row" id ="edit_form">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        
+                        <h2><i class="glyphicon">
+                        </i>{% if key = "move" %} Move to Next level : {% elif key == "revert" %} Revert Back
+{% endif %} {{ articleblock.name }}</h2>
+                        <div class="box-icon">
+
+                        <a href="#" class="glyphicon glyphicon-remove" onclick="return load_page();">Close</a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        <form method = "POST" id= "move_articleblock_form" onsubmit="return move_articleblock(this, {{ obj.id }}, '{{ key }}', '{% with obj|to_class_name as model_name %}{{ model_name }}{% endwith %}');">{% csrf_token %}
+                            <div class="input-group col-md-4">
+                                {% if key == "assign" %}
+                                <b>Select Status</b><br/>
+                                <select name="status" required="required" id ="id_status" onchange="return select_state_user(this);">
+                                    <option value="">-------------</option>
+                                    {% for i in states %}
+                                        <option value="{{ i.id }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                </select></br>
+                                {% endif %}
+                                {% if key == "revert" %}
+                                <b>Select Status</b><br/>
+                                <select name="status" required="required" id ="id_status" onchange="return select_state_user(this);">
+                                    <option value="">-------------</option>
+                                    {% for i in prev_states %}
+                                        <option value="{{ i.id }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                </select></br>
+                                {% endif %}
+                                <b>Select Users to Assign</b>
+                                <br/>
+                                {% if key == "assign" or key == "revert" %}
+                                <span id="assigners_span"></span>
+                                <a href='#' id='select-all'>select all</a> | 
+                                <a href='#' id='deselect-all'>deselect all</a>
+                                {% endif %}
+
+                                {% if key == "move" %}
+                                <a href='#' id='select-all'>select all</a> | 
+                                <a href='#' id='deselect-all'>deselect all</a>
+                                <select name="assigners" id="assigners" multiple="multiple" required="required">
+                                    {% if key == "move" %}
+                                        {% for i in next_state_users %}
+                                            <option value="{{ i.id }}">{{ i.first_name }} {{ i.last_name }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                </select>
+                                {% endif %}
+                            </div>
+                            <br/>
+                            <div class="input-group col-md-4">
+                                <b>Remarks</b>
+                                <br/>
+                                <textarea name="remarks" rows="10" cols="40" required ="required"></textarea>
+                                <br/>
+                            </div>
+                            <br/>
+                            <div class="input-group col-md-4">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                                <a href="#" class="btn btn-default" data-dismiss="modal" onclick="return load_page();">Close</a>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>

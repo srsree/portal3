@@ -1,0 +1,106 @@
+{% extends "home.html" %}
+{% block title %}{{menu.name}} - {% endblock %}
+{% load front_tags %}
+
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li><a href="/{{menu.slug}}/">{{menu.name}}</a></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block banner %}
+
+ {% endblock %}
+{% block left %}
+<div class="inner_cont">
+    <h2>{{menu.name}}</h2>
+    </div>
+<article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="left_con">
+            <ul>
+                {% is_subscribed request as is_sub %}
+              {% for i in menu.get_articles %}
+              <li class="col-lg-4 col-sm-4 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <!--<h2>innovations</h2>-->
+                  </div>
+                  <div class="art_imge">
+                  <!-- this is coomented for to remove free  on mar26 -->
+                  <!-- {% if not i.subscriber_only %}<div class="free-span"><img src="/static/frontend/img/free.jpg" alt="img"/></div>{% endif %}
+                  {% if is_sub %}
+                        <a href="/{{menu.slug}}/{{i.slug}}/">
+                  {% else %}
+                            <a href="/{{menu.slug}}/{{i.slug}}/"> -->
+                        <!--a href="#" onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')" prev -- >
+                  <!-- this is coomented for to remove free  on mar26 -->
+                  <!-- {% endif %} -->
+                  <!-- this is coomented for to remove free  on mar26  end's here -->
+                  <img src="{{i.icon.url_270x180}}" alt="{{i.headline}}">
+                  </a>
+                  </div>
+                  <!--a href="{% if request.session.aslug == i.slug %}/{{menu.slug}}/{{i.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.slug %}onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')"{% endif %}"--><a href="/{{menu.slug}}/{{i.slug}}/">
+
+                  {% if menu.slug == 'mega-hall-of-fame' %}
+                    {% if forloop.counter == 1 %}
+                    <h3>{{i.headline}}</h3>
+                    {% else %}
+                    <h3 style="text-align:left;color:#d81921;font-size:14px;text-transform:uppercase;">{{i.headline}}</h3>
+                    {% endif %}
+                  {% else %}
+                    <h3>{{i.headline}}</h3>
+                    {% endif %}
+                  
+
+                  </a>
+
+
+		  {% if i.byline %}
+      {% if menu.slug == 'mega-hall-of-fame' %}
+      {% if forloop.counter == 1 %}
+      <h6 align="left"><b>{{i.byline|safe}}</b></h6>
+      {% else %}
+      <h3 style="text-align:center;font-size:18px;font-weight:normal;top:-34px;min-height:0px;">
+      {{i.byline|safe}}</h3>
+      {% endif %}
+      {% else %}
+      <h6 align="left"><b>{{i.byline|safe}}</b></h6>
+      {% endif %}
+      {% endif %}
+                  
+{% if menu.slug == 'mega-hall-of-fame' %}
+{% if forloop.counter == 1 %}
+                  <p>{{i.description|safe|striptags|truncatewords:"20"}}</p>
+{% else %}
+                  <p style="top:-20px !important; position:relative;">{{i.description|safe|striptags|truncatewords:"20"}}</p>
+{% endif %}                  
+{% else %}
+                  <p>{{i.description|safe|striptags|truncatewords:"20"}}</p>
+{% endif %}                  
+                  {% if is_sub %}
+                        <a href="/{{menu.slug}}/{{i.slug}}/" class="readmore">
+                  {% else %}
+                            <a href="/{{menu.slug}}/{{i.slug}}/" class="readmore">
+                        <!--a href="#" onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')" class="readmore"-->
+                  {% endif %}
+                  Read More</a> 
+                  </div>
+              </li>
+              {% endfor %}
+              
+            </ul>
+          </div>
+ 
+        </div>
+      </article>
+{% endblock %}

@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+{% load front_tags %}
+
+{% block banner %}
+{% get_top_ad request as top_ad %}
+<div class="maintext">
+  
+<section class="banner_part clearfix">
+  <div class="container">
+<!--    <h2>Top Stories</h2>-->
+    <div class="ban_main clearfix">
+      <div class="row">
+        <div class="col-lg-8 col-sm-8 col-xs-12">
+          <div class="row">
+            <div class="act_ban">
+            <div id=outside>
+               <!-- prev/next links -->
+               <div class="center1">
+                  <!-- <div class="btn2"> <span id=prev2>&lt;&lt;Prev </span>  <span id=next2> Next&gt;&gt;</span> 
+                   </div>-->
+               </div>
+            <div id="slider_kan" data-cycle-slides="div.yel_ign" data-cycle-timeout="5000"  data-cycle-fx="scrollHorz"  data-cycle-log="false" class="cycle-slideshow" data-cycle-prev="#prev2" data-cycle-next="#next2">
+            {% is_subscribed request as is_sub %}  
+                {% for i in banners %}
+                <div class="yel_ign">
+                  <div class="item"> 
+                        {% if is_sub %}
+                                <a href="{% if i.url %}{{i.url}}{% else %}#{% endif %}">
+                          {% else %}
+                                    <a href="{% if i.url %}{{i.url}}{% else %}#{% endif %}">
+                                    <!--a href="#" onclick="subscribe('{% if i.url %}{{i.url}}{% else %}#{% endif %}')"-->
+                          {% endif %}
+                    <img src="/static/media/{{i.image}}" alt="{{i.name}}" usemap="#imgl_id{{i.id}}"/></a>
+                    {% if i.name == 'banner-14th-ani' %}
+                    <map name="imgl_id{{i.id}}">
+                        <!--area shape="rect" coords="405,175,690,225" alt="01" href="/sa1/" style="outline:0px;"-->
+                        <area shape="rect" coords="310,209,530,265" alt="Lakman" href="/hall-of-fame/wizard-with-water/" style="outline:0px;">
+                        <area shape="rect" coords="310,319,530,269" alt="Aziza" href="/hall-of-fame/the-aured-way/" style="outline:0px;" >
+                        <area shape="rect" coords="310,375,530,330" alt="venugopal" href="/hall-of-fame/a-pepper-doctor/" style="outline:0px;" >
+                        <area shape="rect" coords="310,445,530,361" alt="ganesh" href="/hall-of-fame/reader-of-plants/" style="outline:0px;" >
+                        <area shape="rect" coords="270,665,560,430" alt="mohammed" href="/hall-of-fame/titris-headmaster/" style="outline:0px;" >
+                    </map>
+                    {% endif %}
+                  </div>
+                </div>{% endfor %}<!-- item1 -->
+                
+                 </div>
+                 </div>
+               </div> <!-- outside -->
+            <!-- Carousel ends here --> 
+          </div>
+        </div>
+        <div class="col-lg-4 col-sm-4 col-xs-12">
+
+          <ul class="clearfix">
+            {% if not columnists_home %}
+            {% for column in columnists %}
+            <li class="col-lg-12">
+              <div class="row">
+                <div class="inno_h2">
+                    <h2><a {% if column.link %}href="{{column.link}}"{% endif %}>{{column.category.name}}</a></h2>
+                  </div>
+              <div class="col-lg-3 col-sm-4 col-xs-3 pull-left clearfix">
+                  <div class="row">
+                    <div class="colum_img">
+                        <a {% if column.link %}href="{{column.link}}"{% endif %}>
+                            <img src="https://www.civilsocietyonline.com{{MEDIA_URL}}{{column.image}}" alt="image"/>
+                        </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-9 col-sm-8 col-xs-9 clearfix">
+                  <div class="row">
+                    <div class="colum_cont">
+                      <p class="homecol"><a href="/column/{{column.category.slug}}/">{{column.name}}</a></p>
+                      <!--p>{{column.category.name}}</p-->
+                      {% if column.get_latest_column %}
+                      <a href="/column/{{column.category.slug}}/{{column.get_latest_column.slug}}/" class="colh">
+                      {{column.get_latest_column.name}}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+            {% else %}
+            {% for column in columnists_home %}
+            <li class="col-lg-12">
+              <div class="row">
+              <div class="inno_h2">
+                    <h2><a {% if column.link %}href="{{column.link}}"{% endif %}>{{column.category.name}}</a></h2>
+                  </div>
+              <div class="col-lg-3 col-sm-4 col-xs-3 pull-left clearfix">
+                  <div class="row">
+                    <div class="colum_img">
+                        <a {% if column.link %}href="{{column.link}}"{% endif %}>
+                            <img src="https://www.civilsocietyonline.com{{MEDIA_URL}}{{column.image}}" alt="image"/>
+                        </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-9 col-sm-8 col-xs-9 clearfix">
+                  <div class="row">
+                    <div class="colum_cont">
+                      <p class="homecol"><a href="/column/{{column.category.slug}}/">{{column.name}}</a></p>
+                      <!--p>{{column.category.name}}</p-->
+                      {% if column.get_latest_column %}
+                      <a href="/column/{{column.category.slug}}/{{column.get_latest_column.slug}}/" class="colh">
+                      {{column.get_latest_column.name}}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+            {% endif %}
+          </ul>
+  
+        <!-- photo feature ends here --> 
+
+        <!-- <img src="/static/MEDIA_11_09_2020.jpg" usemap="#image-map" style="height:500px;width:420px;">
+
+        <map name="image-map">
+            <area target="_blank" alt="The politics of federalism" title="The politics of federalism" href="https://www.civilsocietyonline.com/centreing-the-states/strong-centre-and-the-politics-of-federalism/" coords="6,48,417,102" shape="rect">
+            <area target="_blank" alt="New revenue streams needed" title="New revenue streams needed" href="https://www.civilsocietyonline.com/centreing-the-states/states-should-wake-up-and-find-new-revenue-streams/" coords="6,109,414,166,219,137" shape="rect">
+            <area target="_blank" alt="The mountains deserve better" title="The mountains deserve better" href="https://www.civilsocietyonline.com/centreing-the-states/in-the-mountains-heavy-lifting-deserves-rewards/" coords="6,174,415,231" shape="rect">
+            <area target="_blank" alt="Work together and compete" title="Work together and compete" href="https://www.civilsocietyonline.com/centreing-the-states/states-should-compete-and-also-work-together/" coords="8,237,413,299" shape="rect">
+            <area target="_blank" alt="For pre-school have a cadre" title="For pre-school have a cadre" href="https://www.civilsocietyonline.com/centreing-the-states/where-are-the-teachers-for-pre-school-learning/" coords="9,305,415,364" shape="rect">
+            <area target="_blank" alt="Recognize cultural diversity" title="Recognize cultural diversity" href="https://www.civilsocietyonline.com/centreing-the-states/bring-states-together-on-objective-national-goals/" coords="9,370,415,431" shape="rect">
+            <area target="_blank" alt="More room for the states" title="More room for the states" href="https://www.civilsocietyonline.com/centreing-the-states/time-for-a-reset-with-more-elbow-room-for-the-states/" coords="10,437,414,493" shape="rect"> 
+        </map> -->
+      </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+<!-- Banner Portion Ends Here -->
+{% endblock %}
+{% block breadcum %}{% endblock %}
+{% block left %}
+
+<article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="left_con">
+            <ul>
+            {% is_subscribed request as is_sub %}
+              {% for i in fms %}
+              <li class="col-lg-4 col-sm-4 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <h2><a href="/{{i.slug}}/">{{i.name}}</a></h2>
+                  </div>
+                  <div class="art_imge">
+                  <!--a href="{% if request.session.aslug == i.get_latest_article.slug %}/{{i.slug}}/{{i.get_latest_article.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.get_latest_article.slug %}onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')"{% endif %}-->         <!--  {% if not i.get_latest_article.subscriber_only %}<div class="free-span"><img src="/static/frontend/img/free.jpg" alt="img"/></div>{% endif %}
+                  {% if is_sub %}
+                        <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/">
+                  {% else %}
+                            <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/"> -->
+                        <!--a href="#" onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')"-->
+                <!--  {% endif %} -->
+                  <img src="https://www.civilsocietyonline.com{{i.get_latest_article.icon.url_270x180}}" alt="{{i.get_latest_article.name}}"/>
+                  </a>
+                  </div>
+                  <h3><!--a href="{% if request.session.aslug == i.get_latest_article.slug %}/{{i.slug}}/{{i.get_latest_article.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.get_latest_article.slug %}onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')"{% endif %}>{{i.get_latest_article.headline|truncatewords:"10"}}</a-->
+                  
+                  
+                  {% if is_sub %}
+                  <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/">{{i.get_latest_article.headline|truncatewords:"12"}}</a>
+                  {% else %}
+                        <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/">{{i.get_latest_article.headline|truncatewords:"12"}}</a>
+                    <!--a href="#" onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')">{{i.get_latest_article.headline|truncatewords:"10"}}</a-->
+                  {% endif %}
+                 {% if i.get_latest_article.byline %}<h6 align="left"><b>{{i.get_latest_article.byline|safe}}</b></h6>{% endif %} 
+                  </h3>
+                  <p>{{i.get_latest_article.description|safe|striptags|truncatewords:"18"}}</p>
+                  <!--a href="{% if request.session.aslug == i.get_latest_article.slug %}/{{i.slug}}/{{i.get_latest_article.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.get_latest_article.slug %}onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')"{% endif %} class="readmore clearfix">Read More</a-->
+                  {% if is_sub %}
+                        <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/" class="readmore clearfix">
+                  {% else %}
+                            <a href="/{{i.slug}}/{{i.get_latest_article.slug}}/" class="readmore clearfix">
+                        <!--a href="#" onclick="subscribe('/{{i.slug}}/{{i.get_latest_article.slug}}/')" class="readmore clearfix"-->
+                  {% endif %}Read More</a>
+                  </div>
+              </li>
+              {% endfor %}
+             
+            </ul>
+          </div>
+          <div class="col-lg-12">
+            <div>
+            {% is_subscribed request as is_sub %}
+<!--              <div class="h2_inspired">-->
+<!--                <a href="/{{travel.slug}}/"><h2>{{travel.name}}</h2></a>-->
+<!--              </div>-->
+<!--              <h3 class="h3_cont">{{travle.description|safe|truncatewords:"20"}}</h3>-->
+<!--              <div class="bottom_carousel">-->
+<!--                   <div class="left_con">-->
+<!--                        <ul>-->
+<!--                            {% for i in travel_articles %}-->
+<!--                          <li class="col-lg-4 col-sm-4 col-xs-12">-->
+<!--                            <div class="singl_colu">-->
+<!--                              {% if is_sub %}-->
+<!--                                    <a href="/{{i.frontmenu.slug}}/{{i.slug}}/">-->
+<!--                              {% else %}-->
+<!--                                        <a href="/{{i.frontmenu.slug}}/{{i.slug}}/">-->
+                                    <!--a href="#" onclick="subscribe('/{{i.frontmenu.slug}}/{{i.slug}}/')"-->
+<!--                              {% endif %}-->
+<!--                              <h3>{{i.headline|truncatewords:"4"}}</h3></a>-->
+<!--            <div class="sin_img">-->
+<!--                              {% if not i.subscriber_only %}-->
+<!--                              <div class="free-span"><img src="https://www.civilsocietyonline.com/static/frontend/img/free.jpg" alt="img"/></div>-->
+<!--                              {% endif %}-->
+<!--                              {% if is_sub %}-->
+<!--                                    <a href="/{{i.frontmenu.slug}}/{{i.slug}}/">-->
+<!--                              {% else %}-->
+<!--                                        <a href="/{{i.frontmenu.slug}}/{{i.slug}}/">-->
+                                    <!--a href="#" onclick="subscribe('/{{i.frontmenu.slug}}/{{i.slug}}/')"-->
+<!--                              {% endif %}-->
+<!--                                <img alt="{{i.name}}" src="https://www.civilsocietyonline.com{{i.icon.url_270x180}}">-->
+<!--                              </a>-->
+<!--                              </div>-->
+<!--                              {% if i.byline %}-->
+<!--                              <p>{{i.byline|truncatewords:"10"}}</p>-->
+<!--                              {% endif %}-->
+<!--                              </div>-->
+<!--                          </li>-->
+<!--                          {% endfor %}-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </div>-->
+              
+              
+              <!--div class="bottom_carousel clearfix">
+                <div class="mid_carousel">
+                <div class="owl-carousel">
+                    {% for i in travel.get_articles %}
+                    <div class="item">
+                            <a href="/{{i.frontmenu.slug}}/{{i.slug}}/"><h2>{{i.headline|truncatewords:"4"}}</h2></a>
+                            <div class="car_img">
+                                <!--a href="{% if request.session.aslug == i.slug %}/{{i.frontmenu.slug}}/{{i.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.slug %}onclick="subscribe('/{{i.frontmenu.slug}}/{{i.slug}}/')"{% endif %}>
+                                <a href="/{{i.frontmenu.slug}}/{{i.slug}}/">
+                                    <img src="{{i.icon.url_180x240}}" alt="img" class="img-responsive">
+                                </a>
+                            </div>
+                            <div class="caption">
+                              <p>{{i.byline|truncatewords:"10"}}</p>
+                            </div>
+                    </div>
+                    {% endfor %}
+
+                  <a class="left carousel-control" href="#myCarousel_bottom" data-slide="prev"><span class="sr-only">Previous</span></a> <a class="right carousel-control" href="#myCarousel_bottom" data-slide="next"><span class="sr-only">Previous</span></a> </div>
+                  </div>
+              </div>
+            </div-->
+          </div>
+        </div>
+      </article>
+
+{% endblock %}
+{% block right %}
+{% get_center_ad request as center_ad %}
+{% get_bottom_ad request as bottom_ad %}
+{% get_columnists request as columnists %}
+{% get_current_issue request as currentissue %}
+ <aside class="col-lg-3 col-sm-3 col-xs-12">
+        <div class="row">
+          <div class="right_cont">
+            <div class="col-lg-12">
+              <div class="row">
+                {% is_subscribed request as is_sub %}
+                {% if is_sub %}
+                <div class="latest_div clearfix">
+                <!--{% get_latest_article request as latest %}-->
+                  <!--a href="{% if request.session.aslug == latest.slug %}/{{latest.frontmenu.slug}}/{{latest.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == latest.slug %}onclick="subscribe('/{{latest.frontmenu.slug}}/{{latest.slug}}/')"{% endif %}"-->
+                  {% if currentissue.attachment %}<a target="_blank" href="{{MEDIA_URL}}{{currentissue.attachment}}"><h2>{{currentissue.name}}</h2></a>
+                  {% else %}<h2>{{currentissue.name}}</h2>{% endif %}
+                  <ul class="clearfix">
+                    <li class="col-lg-12">
+                      <div class="row">
+                        <div class="col-lg-4 col-sm-4 col-xs-3 clearfix">
+                          <div class="row">
+                            <div class="news_img">
+                            {% if currentissue.attachment %}<a target="_blank" href="{{MEDIA_URL}}{{currentissue.attachment}}">{% if currentissue.image %}<img src="https://www.civilsocietyonline.com{{currentissue.image.url_83x117}}" alt="{{currentissue.headline}}"/>{% endif %}{% else %}{% if currentissue.image %}<img src="https://www.civilsocietyonline.com{{currentissue.image.url_83x117}}" alt="{{currentissue.headline}}"/>{% endif %}{% endif %}</a> </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-8 col-sm-8 col-xs-9 clearfix">
+                          <div class="row">
+                            <div class="news_disp">
+                              <p>{{currentissue.text|safe|truncatewords:"23"|striptags}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <!-- latest -->
+                {% endif %}
+                
+                <div class="columnists_sec" style="margin: 1px;padding: 15px;">
+                  
+                    <div class="row">
+            <div class="adv_part">
+              <!--  <div class="subscribe_section">--> <!--img src="https://www.civilsocietyonline.com/static/frontend/img/subscribe-bg.jpg" alt="subscribe"/>
+                <div class="subscribe_btn">
+                  <a href="/subscribe/"><input type="button" value="Subscribe Now"/></a>
+                </div-->
+                <!--<a target="_blank" href="https://www.smallchange.ngo/"><img src="/static/frontend/img/civilsociety_smallchangebanner.png" alt="subscribe"/></a>
+              </div>-->
+              <!--<a  href="https://www.civilsocietyonline.com/looking-back-ahead/"><img src="/static/frontend/img/anniversary_specia.png" alt="subscribe"/></a>-->
+             <!-- <a  href="http://www.graam.org.in/pape"><img src="/static/frontend/img/GRAAM-AD.jpg" alt="subscribe"/></a>-->
+      <a href="https://www.civilsocietyonline.com/plant-power/flowers-and-plants-almost-always-capture-our-attention/"><img src="/static/frontend/img/PLANT-POWER-1.png" alt="subscribe"/></a>
+              <!--<div class="adver_section">-->
+              <!--
+              {% if top_ad.name == 'Ayurveda' %} <a href="
+https://www.civilsocietyonline.com/ayurveda-advisory/hairfall-has-its-roots/"> {% endif %}
+                <img src="https://www.civilsocietyonline.com{{top_ad.image.url_371x126}}" alt="advertising"/>
+                {% if top_ad.name == 'Ayurveda' %}</a>{% endif %}
+              </div> -->+
+              <div class="photofeature">
+<!--                <h2>Photo - Feature</h2>-->
+                <div class="photo_carousel">
+                  <div id=outside1 style="margin-bottom: 25px;">
+               <!-- prev/next links -->
+               <div class="center1">
+                   <div class="btn2"> <span id=prev22>&lt;&lt;Prev </span>  <span id=next22> Next&gt;&gt;</span> 
+                   </div>
+               </div>
+                <div id="slider_kan1" data-cycle-slides="div.yel_ign1" data-cycle-timeout="0"  data-cycle-fx="scrollHorz"  data-cycle-log="false" class="cycle-slideshow" data-cycle-prev="#prev22" data-cycle-next="#next22">  
+                    
+                    {% for i in photo_gallery %}
+                        <div class="yel_ign1">
+                        <h2>PHOTO FEATURES</h2>
+                        <a href="/photo-feature/{{i.slug}}/"><img src="https://www.civilsocietyonline.com{{i.image.url_371x242}}" alt="{{i.name}}"></a></div>
+                    {% endfor %}
+                    
+                </div>
+                    
+                    <!--div class="video_icon"> <img src="/static/frontend/img/video-icon.png" alt="image"/> </div-->
+                </div>
+                <!-- Columnists  -->
+                </div>
+</div>
+</div>
+                <div class="facebook_sec">
+                  <div class="facebook_h2">
+                    <h2>Facebook post</h2>
+                  </div>
+                  <div class="fb-page" data-href="https://www.facebook.com/civilsocietyonline" data-width="272" data-height="200" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false" data-show-posts="true"><div class="fb-xfbml-parse-ignore"><blockquote cite="https://www.facebook.com/civilsocietyonline"><a href="https://www.facebook.com/civilsocietyonline">Civil Society</a></blockquote></div></div>
+                  <br/>
+                </div>
+                <!-- facebook post -->
+                
+                <div class="twitter_sec">
+                  <div class="twitter_h2">
+                    <h2>twitter tweet</h2>
+                  </div>
+                  <a class="twitter-timeline" data-widget-id="733551883659288576" href="https://twitter.com/civilsocietyind?ref_src=twsrc%5Etfw">Tweets by @PortalIND</a> 
+                  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <!-- <a class="twitter-timeline" href="https://twitter.com/civilsocietyind" data-widget-id="733551883659288576">Tweets by @CivilSocietyIND</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^https:/.test(d.location)?'https':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script> -->
+                </div>
+                <!-- twitter -->
+                
+                {% if center_ad.image %}
+                <div class="olx"> <img src="https://www.civilsocietyonline.com{{center_ad.image.url_270x270}}" alt="{{center_ad.name}}"/> </div>
+                {% endif %}
+                <!-- olx -->
+                {% if bottom_ad.image %}
+                <div class="mcd"> <img src="https://www.civilsocietyonline.com{{bottom_ad.image.url_270x270}}" alt="{{bottom_ad.name}}"/> </div>
+                {% endif %}
+                <!-- mcd --> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+      
+      <!--html changes popup-->
+  </div>
+
+
+
+{% endblock %}
+
+
+

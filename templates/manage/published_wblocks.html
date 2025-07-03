@@ -1,0 +1,91 @@
+{% extends "manage/base.html" %}
+{% load wsf_tags %}
+{% block title %}Publication Articles{% endblock %}
+
+
+{% block rightcontent %}
+
+<div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>Publication Articles</li>
+                <li>{{ section.headline }}</li>
+            </ul>
+        </div>
+        <button class="btn btn-primary noty" data-noty-options="{&quot;text&quot;:&quot;This is a success notification&quot;,&quot;layout&quot;:&quot;topLeft&quot;,&quot;type&quot;:&quot;success&quot;}" style="display:none;">
+</button>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>{{ section.headline }}</h2>
+
+                        <div class="box-icon">
+                            <a href="#" class="btn btn-minimize btn-round btn-default"><i
+                                    class="glyphicon glyphicon-chevron-up"></i></a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                        {% if wblocks %}
+                            <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for obj in wblocks %}
+                                        <tr>
+                                            <td>{{ obj.name }}</td>
+                                            <td class="center">{{ obj.section.headline }}</td>
+                                            
+                                            <td class="center">
+                                                {% if obj.display_in_frontend %}
+                                                    <span class="label-success label label-default">Published</span>
+                                                {% else %}
+                                                    <span class="label-default label">UnPublished</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="center">
+                                                {% if obj.display_in_frontend %}
+                                                <a class="btn btn-danger" href="/manage-section/publish/published-wbloks/?id={{obj.id}}&key=unpublish&next={{request.get_full_path|urlencode}}">
+                                                    <i class="glyphicon glyphicon-remove icon-white"></i>
+                                                    UnPublish
+                                                </a>
+                                                {% else %}
+                                                <a class="btn btn-success" href="/manage-section/publish/published-wbloks/?id={{obj.id}}&key=publish&next={{request.get_full_path|urlencode}}">
+                                                    <i class="glyphicon glyphicon-ok icon-white"></i>
+                                                    Publish
+                                                </a>
+                                                {% endif %}
+                                                {% get_hash_value obj.id as hval %}
+                                                <a class="btn btn-warning" href="/manage-section/view/published-wbloks/{{hval}}/">
+                                                    <i class="glyphicon glyphicon-th icon-white"></i>
+                                                    View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        
+                        {% else %}
+                            <div class="alert alert-info">
+                                No Records found.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

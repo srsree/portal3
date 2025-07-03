@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% load front_tags %}
+{% block title %}Subscribe - {% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li>Subscribe</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block script %}
+<script>
+$(document).ready(function(){
+    cntid = "{{request.POST.billing_country}}"
+    if (cntid){
+        $("#id_billing_country").val(cntid);
+    }
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $("#subscribe" ).submit(function( event ) {
+          billing_name = $('input[name=billing_name]').val();
+          billing_profession = $('input[name=billing_profession]').val();
+          billing_email = $('input[name=billing_email]').val();
+          billing_address = $('input[name=billing_address]').val();
+          billing_city = $('input[name=billing_city]').val();
+          billing_state = $('input[name=billing_state]').val();
+          billing_country = $('#id_billing_country').val();
+          billing_zip = $('input[name=billing_zip]').val();
+          billing_tel = $('input[name=billing_tel]').val();
+          if (!billing_name){
+            alert("Please enter name to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_profession){
+            alert("Please enter profession to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_email){
+            alert("Please enter email to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_address){
+            alert("Please enter address to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_city){
+            alert("Please enter city to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_state){
+            alert("Please enter state to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_country){
+            alert("Please select country to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_zip){
+            alert("Please enter zipcode to proceed." );
+            event.preventDefault();
+          }
+          else if (!billing_tel){
+            alert("Please enter phone number to proceed." );
+            event.preventDefault();
+          }
+        });
+    });
+</script>
+{% endblock %}
+{% block left %}
+{% if not key %}
+<article class="col-lg-9 col-sm-9 col-xs-12">
+<h4></h4>
+<div class="row">
+    
+    <div class="inner_cont">
+    <h2>Subscribe</h2>
+    
+    </div>
+    <h5>{{detailname}}</h5>
+    <div class="subscribe_div">
+    <form action="." method="POST" id="subscribe">{% csrf_token %}
+      <!-- commented start  for  new subscribe -->
+
+           <!-- <p>Get full online access to Civil Society magazine
+PLUS latest issues delivered to your inbox.</p>
+<p></p>
+            <p>Newsletters, listings, NGO/activist connections, opportunities
+to volunteer and donate and much more.</p> -->
+
+<!-- end comment new subscribe -->
+                {% get_rupee 12 as 12rupee %}
+                {% get_rupee 50 as 50rupee %}
+<!--              <p><input type="radio" name="amount" checked="checked" value="1-{{12rupee}}"> $12 One year  — full access with email updates. (Rs.{{12rupee}})</input></p>-->
+<!--              <p><input type="radio" name="amount" value="2-{{20rupee}}"> $20 Two year — full access with email updates.(Rs.{{20rupee}})</input></p>-->
+<!--              <p><input type="radio" name="amount" value="3-{{50rupee}}"> $50 Three years — full access with email updates,-->
+<!--donating and volunteering opportunities, NGO/Activist connections.(Rs.{{50rupee}})</input></p>-->
+<!--              <p><input type="radio" name="amount" value="full-{{100rupee}}"> $100 SUPPORT INDEPENDENT MEDIA(Rs.{{100rupee}})</input></p>-->
+
+      <!-- commented start  for  new subscribe -->
+
+                <!-- <div class="int-p">
+                <p><strong>International:</strong></p>
+                    <p><input type="radio" name="amount" checked="checked" value="int-1"> $12 online access for 1 year</input></p>
+                    <p><input type="radio" name="amount"  value="int-2"> $50 online PLUS print edition for 1 year</input></p>
+                <p></p>
+    <br/>
+                <p><strong>India:</strong></p>
+                    <p><input type="radio" name="amount"  value="ind-1"> Rs 700   Only Digital for 1 year</input></p>
+                    <p><input type="radio" name="amount"  value="ind-2"> Rs 1000 Print + Digital for 1 year</input></p>
+                    <p><input type="radio" name="amount"  value="ind-3"> Rs 1800 Print + Digital for 2 years</input></p>
+                    <p><input type="radio" name="amount"  value="ind-4"> Rs 2800 Print + Digital for 3 years</input></p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;FREE : Civil Society's calendar with each 3-years subscription till stocks last.</p>
+                </div>
+                </div> -->
+<!-- end comment new subscribe -->
+
+           <h4>Billing Details:</h4>
+           {% if error %}
+            <h4 style="color:red;">{{error}}</h4>
+            {% endif %}
+
+           <input type="hidden" name="amount" value="{{sub}}">
+           <input type="hidden" name="merchant_id" value="{{merchant_id}}">
+           <input type="hidden" name="order_id" value="{{order_id}}">
+           <input type="hidden" name="currency" value="INR">
+           <input type="hidden" name="language" value="en">
+            <input type="hidden" name="access_code" id="access_code" value="{{access_code}}">
+           <input type="hidden" name="redirect_url" value="{{redirect_url|urlencode}}">
+           <input type="hidden" name="cancel_url" value="{{redirect_url|urlencode}}">
+           <div class="form_label col-lg-12">
+              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Customer Name *" name="billing_name" required="required" value="{{request.POST.billing_name}}">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Profession*" name="billing_profession" required="required" value="{{request.POST.billing_profession}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="email" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Email *" id="email" name="billing_email" required="required" value="{{request.POST.billing_email}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Address *" name="billing_address" required="required" value="{{request.POST.billing_address}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="City *" name="billing_city" required="required" value="{{request.POST.billing_city}}">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12"  placeholder="State *" name="billing_state" required="required" value="{{request.POST.billing_state}}">
+           </div>
+           <div class="form_label col-lg-12">
+              {% get_countires as contries %}
+              <select name="billing_country" id="id_billing_country" class=" input_type-new col-lg-6 col-sm-9 col-xs-12">
+              <option value="">Select Country *</option>
+              {% for i in contries %}
+                <option value="{{i.id}}" {% if p_billing_country == i.id %}selected="selected"{% endif %}>{{i.name}}</option>
+            {% endfor %}
+              </select>
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Country *" name="billing_country" required="required">-->
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Zipcode *" name="billing_zip" required="required" value="{{request.POST.billing_zip}}">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12 col-lg-6 col-sm-9 col-xs-12" placeholder="Phone *" name="billing_tel" required="required" value="{{request.POST.billing_tel}}">
+           </div>
+        
+          
+          <div class="form_label col-lg-12"> 
+           <textarea class="text_ar-new col-lg-6 col-sm-9 col-xs-12" placeholder="Areas of interest..." name="billing_cust_notes" >{{request.POST.billing_cust_notes}}</textarea>
+         </div>
+         <input type="submit" value="Proceed to Pay" class="leave_comment pull-left pay-btn"/>
+    </form>
+    </div>
+    </article>
+{% else %}
+<link rel="stylesheet" href="/static/css/custom.css">
+<div class="container">
+    <div class="container_border">
+        <div class="col-md-6 " align="center">
+
+            <img src="/static/img/HINDI-COVER.png">
+            <p class="img_text">What do you do when your water runs out? when your deep tube-well drilled with much hope fails to perform? when the rains refuse to turn up?
+        </div>
+        <div class="col-md-6 container_leftform">
+            <div class=" col-lg-12">
+                <p>Book Name: GALI GALI BAARISH<br/>
+                               GAON GAON BHAGIRATH </p>
+                <p>Price : Rs 280/-</p>
+            </div>
+            {% if error %}
+            <h4 style="color:red;">{{error}}</h4>
+            {% endif %}
+            <form action="." method="POST" id="subscribe" class="watercatcher_form">{% csrf_token %}
+           <input type="hidden" name="merchant_id" value="{{merchant_id}}">
+           <input type="hidden" name="order_id" value="{{order_id}}">
+           <input type="hidden" name="amount" value="100">
+           <input type="hidden" name="currency" value="INR">
+           <input type="hidden" name="language" value="hi">
+            <input type="hidden" name="access_code" id="access_code" value="{{access_code}}">
+           <input type="hidden" name="redirect_url" value="{{redirect_url|urlencode}}">
+           <input type="hidden" name="cancel_url" value="{{redirect_url|urlencode}}">
+           <div class="form_label col-lg-12">
+              <input type="number" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Number of copies*" name="billing_profession" required="required" min="1">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Customer Name *" name="billing_name" required="required" value="{{request.POST.billing_name}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="email" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Email *" id="email" name="billing_email" required="required" value="{{request.POST.billing_email}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Address *" name="billing_address" required="required" value="{{request.POST.billing_address}}">
+           </div>
+            <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="City *" name="billing_city" required="required" value="{{request.POST.billing_city}}">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12"  placeholder="State *" name="billing_state" required="required" value="{{request.POST.billing_state}}">
+           </div>
+           <div class="form_label col-lg-12">
+              {% get_countires as contries %}
+              <select name="billing_country" id="id_billing_country" class=" input_type-new col-lg-6 col-sm-9 col-xs-12">
+              <option value="">Select Country *</option>
+              {% for i in contries %}
+                <option value="{{i.id}}" {% if request.POST.billing_country == i.id %}selected="selected"{% endif %}>{{i.name}}</option>
+            {% endfor %}
+              </select>
+<!--              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Country *" name="billing_country" required="required">-->
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class=" input_type-new col-lg-6 col-sm-9 col-xs-12" placeholder="Zipcode *" name="billing_zip" required="required" value="{{request.POST.billing_zip}}">
+           </div>
+           <div class="form_label col-lg-12">
+              <input type="text" class="  input_type-new col-lg-6 col-sm-9 col-xs-12 col-lg-6 col-sm-9 col-xs-12" placeholder="Phone *" name="billing_tel" required="required" value="{{request.POST.billing_tel}}">
+           </div>
+         <input type="submit" value="Proceed to Pay" class="leave_comment pull-left pay-btn"/>
+        </div>
+
+        <div style="margin-left:10%;">
+        <p><u>Delivery Charges:</u></p>
+        <p>Single Book weight: 200 gm</p>
+
+        <p>In India : Normal Delivery Single copy - Rs 50/-</p>
+        <p>In India : more than one copy weight according charges</p>
+
+        <p>International delivery charges: Normal Delivery Single copy - Rs 175/-</p>
+        <p>International delivery charges : more than one copy weight according charges</p>
+        </div>
+        
+
+    </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
+{% block right %}{% endblock %}

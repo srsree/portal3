@@ -1,0 +1,120 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage Problem Question{% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+    <script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+    <script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+    <script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+    <link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+    <!-- jQuery -->
+
+<script type="text/javascript" >
+    $(document).ready(function() {
+        if ('{{edit}}' == 'True') {
+            var qtype = document.getElementById("id_qtype").value;
+            if (qtype == 'T'){
+                $('#text_choices_id').show();
+            }
+            else {
+                $('#text_choices_id').hide();
+            }
+        }
+        else {
+            $('#text_choices_id').hide();
+        }
+        $('#id_qtype').click(function(){
+            var text=$(this).val();
+            if (text == 'T'){
+                    $('#text_choices_id').show();
+                }
+            else {
+                    $('#text_choices_id').hide();
+                }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#q_form").validate({
+            rules :
+            {
+            qtype : {required : true},
+            text : {required : true},
+            text_choices : {required : true},
+            order : {required:true, digits:true},
+            },
+
+        });
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=assesment">Topic</a>
+                </li>
+                <li>
+                    Add Question
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Question</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="q_form" action = "/manage-section/edit-pblmquestion/?question_id={{question_obj.id}}&pblm_id={{pblm_obj.id}}" method = "post">{% csrf_token %}
+                        {% else %}
+                            <form id="q_form" action = "/manage-section/add-pblmquestion/?pblm_id={{pblm_id}}" method = "post">{% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4" id="{{field.name}}_id">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            {% for field in form1 %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "home.html" %}
+{% load front_tags %}
+{% block title %} Search Result - {{q}} {% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        <li class="breadcum_sel"><a href="#">Search Result</a></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+<div class="inner_cont">
+    <h4>Search result for : {{q}}</h4>
+    </div>
+<article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="left_con newclass">
+          {% is_subscribed request as is_sub %}
+            {% if results %}
+            <ul>
+              {% for i in results %}
+              <li class="col-lg-4 col-sm-4 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <!--<h2>innovations</h2>-->
+                  </div>
+                  <h3>
+                  <a href="{{i.url}}">
+                  
+                  {{i.title}}</a>
+                  </h3>
+                  <p>{{i.content|safe|striptags|truncatewords:"20"}}</p>
+                  <a href="{{i.url}}" class="readmore">
+                  
+                  Read More</a> 
+                  </div>
+              </li>
+              {% endfor %}
+              
+            </ul>
+            {% else %}
+            <h4> Search result not found </h4>
+            {% endif %}
+          </div>
+ 
+        </div>
+      </article>
+{% endblock %}
+

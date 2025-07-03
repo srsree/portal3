@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Gallery - {% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li>Gallery</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+    <article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+           
+          <div class="left_con gallery_section">
+            <ul>
+             {% for i in gals %}
+              <li class="col-lg-12 col-sm-12 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <!--<h2>innovations</h2>-->
+                  </div>
+                  <h3>{{i.name}}</h3>
+                  {% for j in i.get_images %}
+                    <a class="fancybox" rel="gallery{{i.id}}" href="{{j.image.url}}" title="{{j.name}}"> <img src="{{j.image.url_120x120}}" alt="{{j.name}}"> </a>
+                  {% endfor %}
+               </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          
+ 
+        </div>
+      </article>
+{% endblock %}
+{% block right %}
+{% endblock %}

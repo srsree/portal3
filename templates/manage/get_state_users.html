@@ -1,0 +1,66 @@
+
+
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+	<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+
+
+    <link href="/static/manage/css/multi-select.css" rel='stylesheet'>
+    <script src="/static/bower_components/jquery/jquery.min.js"></script>
+    <script src="/static/manage/js/jquery.multi-select.js"></script>
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#assigners').multiSelect({
+                selectableHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+                selectionHeader: "<input type='text' class='search-input' autocomplete='off' placeholder='Type Name'>",
+                afterInit: function(ms){
+                var that = this,
+                    $selectableSearch = that.$selectableUl.prev(),
+                    $selectionSearch = that.$selectionUl.prev(),
+                    selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
+                    selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+
+                that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function(e){
+                  if (e.which === 40){
+                    that.$selectableUl.focus();
+                    return false;
+                  }
+                });
+
+                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function(e){
+                  if (e.which == 40){
+                    that.$selectionUl.focus();
+                    return false;
+                  }
+                });
+              },
+              afterSelect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              },
+              afterDeselect: function(){
+                this.qs1.cache();
+                this.qs2.cache();
+              }
+            });
+            $('#select-all').click(function(){
+              $('#assigners').multiSelect('select_all');
+              return false;
+            });
+            $('#deselect-all').click(function(){
+              $('#assigners').multiSelect('deselect_all');
+              return false;
+            });
+        });
+    </script>
+
+<select id ="assigners" name = "assigners" multiple="multiple">
+    {% for i in users %}
+        <option value="{{ i.id }}">{{ i.first_name }} {{ i.last_name }}</option>
+    {% endfor %}
+</select>
+

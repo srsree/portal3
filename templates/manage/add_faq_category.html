@@ -1,0 +1,86 @@
+{% extends "manage/base.html" %}
+{% block title %}Manage FAQ{% endblock %}
+
+
+{% block rightcontent %}
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#faq_cat_form").validate({
+            rules :
+            {
+            name : {required : true,maxlength:150},
+             },
+            messages:
+            {
+                name : {required : "please enter the name"},
+            }
+        });
+    });
+</script>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    <a href="/manage/?key=faq">FAQ</a>
+                </li>
+                <li>
+                    Add FAQ
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            {% if edit_done %}
+            <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>Changes Successfully Edited!</strong> 
+            </div>
+            {% endif %}
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add FAQ</h2>
+                    </div>
+
+                    <div class="box-content">
+                        {% if edit %}
+                            <form id="faq_cat_form" action = "/manage-section/edit-faq-category/?faq_id={{faq_id}}" method = "post">{% csrf_token %}
+                        {% else %}
+                            <form id="faq_cat_form" action = "/manage-section/add-faq-category/" method = "post">{% csrf_token %}
+                        {% endif %}
+                            {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-default">{% if edit %}Save Changes{% else %}Submit{% endif %}</button>
+                            <a href="/manage/?key=faq"><input type="button" value="Close" class="btn btn-default" style="width:9%"></a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

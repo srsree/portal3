@@ -1,0 +1,161 @@
+{% extends "manage/base.html" %}
+{% block title %} Manage Expert {% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<link href="/static/manage/css/multi-select.css" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#expert_form").validate({
+            rules :
+            {
+                name : {required : true},
+                address : {required : true},
+                contact_no : {required : true, digits:true, maxlength:10, minlength:8},
+            },
+            messages :
+            {
+                name : {required : "please enter the name"},
+                address : {required : "please enter the address"},
+                contact_no : {required : "please enter the contact no"},
+            }
+        });
+        $('#id_expert_specialisation').multiSelect({});
+        
+        $('#addRow').click(function(){
+            
+            var count = $('tr.data_row').length;
+            count = parseInt(count) + 1
+            $('input[name=count]').val(count);
+            var tR = $('.data_row:last').clone();
+            $(tR).find('td input.test_name').attr('name', 'name_'+count);
+            $(tR).find('td input.description').attr('name', 'description_'+count);
+            $(tR).find('td input.test_name').attr('id', 'name_'+count);
+            $(tR).find('td input.description').attr('id', 'description_'+count);
+            $(tR).find('td input.description').val('');
+            $(tR).find('td input.test_name').val('');
+            $(tR).insertAfter('.data_row:last');
+	    
+        });
+	
+        
+        $('#dltRow').click(function(){
+                  count = $('input[name=count]').val();
+                  if (count > 1) {
+                        $('tr.data_row:last').remove();
+                        count  = $('tr.data_row').length;
+                        $('input[name=count]').val(count);
+                  }
+                  
+            });
+        
+    });
+</script>
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add Expert 
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add Expert</h2>
+                    </div>
+                    <div class="box-content">
+                        {% if edit %}
+                        <form id="expert_form" action = "/manage-section/edit-expert/?expert_id={{expert_details_obj.id}}" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        <input type="hidden" name="count" value= "{% if expert_details_obj.get_affiliations %}{{expert_details_obj.get_affiliations.count}}{% else %}1{% endif %}" />
+                        {% else %}
+                        <form id="expert_form" action = "/manage-section/add-expert/" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                        <input type="hidden" name="count" value= "1" />
+                        {% endif %}
+                        {% if error %}<p style="color:red"><b>{{error}}</b></p>{% endif %}
+                        {% for field in form %}
+                        <div class="input-group col-md-4">
+                            {{ field.label_tag }}
+                            <br/>
+                            {{ field }}
+                            <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                        </div>
+                    {% endfor %}
+                    
+                        <div>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <td >Affilation Name</td>
+                                    <td > Description </td>
+                                </tr>
+                                </thead> 
+                                <tbody>
+                                    
+                                    {% if not edit or not expert_details_obj.get_affiliations %}
+                                      <tr class="data_row">
+                                        <td >
+                                            <input type="text"  class="test_name"  value="" id="name_1" name="name_1">
+                                                
+                                        </td>
+                                        <td >
+                                            <input type="text" class="description" id="description_1" value="" name="description_1">
+                                        </td>
+                                      </tr>
+                                    {% else %}
+                                        
+                                        {% for a in expert_details_obj.get_affiliations %}
+                                        <tr class="data_row">
+                                        <td >
+                                            <input type="text"  class="test_name"  value="{{a.name}}" id="name_{{forloop.counter}}" name="name_{{forloop.counter}}">
+                                        </td>
+                                        <td >
+                                            <input type="text" class="description" id="description_{{forloop.counter}}" value="{{a.description}}" name="description_{{forloop.counter}}">
+                                        </td>
+                                        </tr>
+                                    {% endfor %}
+                                 {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <input type="button" id="addRow" value="Add New Row">
+                            <input type="button" id="dltRow" value="Delete Row">
+                        </div>
+                        <br>
+                        <input type="hidden" name="atype" value="{{atype}}"/>
+                        <button type="submit" class="btn btn-default">{% if edit %}Update{% else %}Submit{% endif %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+    </div>
+{% endblock %}

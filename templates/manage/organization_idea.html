@@ -1,0 +1,388 @@
+{% extends "manage/base.html" %}
+{% block title %} Manage Organization Idea {% endblock %}
+
+
+{% block rightcontent %}
+{{form.media}}
+<script>
+    $(document).ready(function(){
+        $('input').addClass('input_style');
+        $('label').addClass('new_label');
+    });
+</script>
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link href="/static/css/multi-select.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+<script src="/static/manage/js/jquery.quicksearch.js"></script>
+
+<style>
+.error{color:red; min-width: 200px;}
+</style>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#org_form").validate({
+            rules :
+            {
+                title : {required : true},
+                frontmenu : { required : true },
+                start_date : {required : true},
+                end_date : {required : true},
+                publish_date : {required : true},
+                content_type : {required : true},
+            },
+        });
+     });
+</script>
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keywords').tagsInput();
+	    });
+    });
+
+</script>
+
+<script type="text/javascript">
+    	$(document).ready(function(){
+	    $('#writers').multiSelect();
+	    $('#id_publish').datetimepicker({format:'Y-m-d',});
+	    $('#id_start_date').datetimepicker({format:'Y-m-d',});
+	    $('#id_end_date').datetimepicker({format:'Y-m-d',});
+    });
+
+</script>
+<script>
+    $(document).ready(function() {
+        $("#folder").change(function() {
+            var id=$(this).val();
+            $.ajax({
+                url : "/manage-section/get-sub-menu/",
+                type : "GET",
+                dataType: "json",
+                data :{'id':id},
+                success: function(data) {
+                    if (data) {
+                        var res = data.res;
+                        $('#subfolder').find('option').remove().end();
+                        $('<option>', {value : "" }).html("Select SubFolder").appendTo('#subfolder');
+                        for (i=0;i<res.length;i++) {
+                            $('<option>', {value : (res[i].slug) }).html(res[i].name).appendTo('#subfolder');
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $("#id_parent_div").hide();
+        if ('{{content_type}}' == 1 || '{{content_type}}' == 2 || '{{content_type}}' == 3 || '{{content_type}}' == 4 || '{{content_type}}' == 5 ){
+            $("#id_parent_div").show();
+            $("#sel_block_div").hide();
+            $("#sel_article_div").show();
+            $("#sel_column_div").hide();
+            $("#sel_faq_div").hide();
+        }
+        else if ('{{content_type}}' == 'disorder'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").show();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").hide();
+        }
+        else if ('{{content_type}}' == 'column'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").show();
+                $("#sel_faq_div").hide();
+        }
+        else if ('{{content_type}}' == 'faq'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").show();
+            }
+        $("#content_type").change(function() {
+            $("#id_slug").val('');
+            var id=$(this).val();
+            if (id == 1 || id == 2 || id == 3 || id == 4 || id == 5){
+                $("#id_parent_div").show();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").show();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").hide();
+                $("#block_parent").val('');
+                $("#faq_parent").val('');
+            }
+            else if (id == 'disorder'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").show();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").hide();
+                $("#art_parent").val('');
+                $("#faq_parent").val('');
+            }
+            else if (id == 'column'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").show();
+                $("#sel_faq_div").hide();
+            }
+            else if (id == 'faq'){
+                $("#id_parent_div").show();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").show();
+                $("#art_parent").val('');
+                $("#block_parent").val('');
+            }
+            else{
+                $("#id_slug").val('');
+                $("#parent").val('');
+                $("#id_parent_div").hide();
+                $("#sel_block_div").hide();
+                $("#sel_article_div").hide();
+                $("#sel_column_div").hide();
+                $("#sel_faq_div").hide();
+            }
+        });
+        $("#block_parent").change(function() {
+            var id=$(this).val();
+            $("#id_slug").val(id);
+        });
+        $("#art_parent").change(function() {
+            var id=$(this).val();
+            $("#id_slug").val(id);
+        });
+        $("#column_parent").change(function() {
+            var id=$(this).val();
+            $("#id_slug").val(id);
+        });
+        $("#faq_parent").change(function() {
+            var id=$(this).val();
+            $("#id_slug").val(id);
+        });
+        $('#id_slug').bind('keypress', function (event) {
+            var regex = new RegExp("^[a-zA-Z0-9-\b]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+               event.preventDefault();
+               return false;
+            }
+        });
+    });
+</script>
+
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <!-- content starts -->
+        <div>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/home/">Home</a>
+                </li>
+                <li>
+                    Add {% if idea %}New{% else %}Organization{% endif %} Idea
+                </li>
+            </ul>
+        </div>
+        {% if error %}<span style="color:red;">{{error}}</span>{% endif %}
+        {% if not added %}
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Add {% if idea %}New{% else %}Organization{% endif %} Idea</h2>
+                    </div>
+                    <div class="box-content">
+                    {% if idea %}
+                        <form role="form" id="org_form" action="/manage-section/create-new-idea/" method="POST">{% csrf_token %}
+                    {% else %}
+                        <form role="form" id="org_form" action="/manage-section/create-organization-idea/" method="POST">{% csrf_token %}
+                    {% endif %}
+                    <div class="form-group1">
+                        <label class="control-label new_label" for="content_type">Select Content Type</label>
+
+                        <div class="controls new_select_box">
+                            <select name="content_type" id="content_type">
+                                <option value="">Select Content Type</option>
+                                <option value="disorder" {% if content_type == 'disorder' %}selected{% endif %}>Disorder</option>
+                                <option value="1" {% if content_type == '1' %}selected{% endif %}>Article</option>
+                                <option value="2" {% if content_type == '2' %}selected{% endif %}>Expert Speak</option>
+                                <option value="3" {% if content_type == '3' %}selected{% endif %}>Interview</option>
+                                <option value="4" {% if content_type == '4' %}selected{% endif %}>Case Studies</option>
+                                <option value="5" {% if content_type == '5' %}selected{% endif %}>Myths and Facts</option>
+                                <!--option value="column" {% if content_type == 'column' %}selected{% endif %}>Column</option-->
+                                <option value="faq" {% if content_type == 'faq' %}selected{% endif %}>FAQ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group1">
+                        <label class="control-label new_label" for="selectError2">Select Section</label>
+
+                        <div class="controls new_select_box">
+                            <select name="frontmenu" id="folder">
+                                <option value="">Select Section</option>
+                                {% for i in frontmenus %}
+                                    {% ifequal i.slug frontmenu %}
+                                        <option value="{{i.slug}}" selected>{{i.name}}</option>
+                                    {% else %}
+                                        <option value="{{i.slug}}">{{i.name}}</option>
+                                    {% endifequal %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group1">
+                        <label class="control-label new_label" for="selectError2">Select SubSection</label>
+
+                        <div class="controls new_select_box">
+                            <select name="submenu" id="subfolder">
+                                <option value="">Select SubSection</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% if not lang == 'english' or not lang %}
+                        <div id="id_parent_div">
+                            <div class="form-group1">
+                                <label class="control-label new_label" for="selectError2">Select Parent Document</label>
+
+                                <div id="sel_article_div">
+                                    <div class="controls new_select_box">
+                                        <select name="articleparent" id="art_parent">
+                                            <option value="">Select Parent Document</option>
+                                            {% for i in articles %}
+                                                {% ifequal i.slug parent %}
+                                                    <option value="{{i.slug}}" selected>{{i.headline}}</option>
+                                                {% else %}
+                                                    <option value="{{i.slug}}">{{i.headline}}</option>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="sel_block_div">
+                                    <div class="controls new_select_box">
+                                        <select name="blockparent" id="block_parent">
+                                            <option value="">Select Parent Document</option>
+                                            {% for i in workflowblocks %}
+                                                {% ifequal i.slug parent %}
+                                                    <option value="{{i.slug}}" selected>{{i.name}}</option>
+                                                {% else %}
+                                                    <option value="{{i.slug}}">{{i.name}}</option>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="sel_column_div">
+                                    <div class="controls new_select_box">
+                                        <select name="parent" id="column_parent">
+                                            <option value="">Select Parent Document</option>
+                                            {% for i in columns %}
+                                                {% ifequal i.slug parent %}
+                                                    <option value="{{i.slug}}" selected>{{i.name}}</option>
+                                                {% else %}
+                                                    <option value="{{i.slug}}">{{i.name}}</option>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="sel_faq_div">
+                                    <div class="controls new_select_box">
+                                        <select name="faqparent" id="faq_parent">
+                                            <option value="">Select Parent Document</option>
+                                            {% for i in faqs %}
+                                                {% ifequal i.slug parent %}
+                                                    <option value="{{i.slug}}" selected>{{i.name}}</option>
+                                                {% else %}
+                                                    <option value="{{i.slug}}">{{i.name}}</option>
+                                                {% endifequal %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <span style="margin-left:17%;color:red;">or Write Slug</span><br/><br/>
+                            <div class="form-group1">
+                                <label for="id_slug" class="new_label">Slug</label>
+                                <input type="text" name="slug" value="{% if slug %}{{slug}}{% endif %}" class="input_style" id="id_slug" placeholder="Enter Slug">
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="form-group1">
+                        <label for="id_title" class="new_label">Title</label>
+                        <input type="text" name="title" value="{% if title %}{{title}}{% endif %}" class="input_style" id="id_title" placeholder="Enter Document title">
+                    </div>
+                    <div class="form-group1">
+                        <label for="id_start_date" class="new_label">Start Date</label>
+                        <input type="text" name="start_date" value="{% if start_date %}{{start_date}}{% endif %}" class="input_style" id="id_start_date" placeholder="Enter Start Date">
+                    </div>
+                    <div class="form-group1">
+                        <label for="id_end_date" class="new_label">End Date</label>
+                        <input type="text" name="end_date" value="{% if end_date %}{{end_date}}{% endif %}" class="input_style" id="id_end_date" placeholder="Enter End Date">
+                    </div>
+                    <div class="form-group1">
+                        <label for="id_publish" class="new_label">Publish Date</label>
+                        <input type="text" name="publish_date" value="{% if publish_date %}{{publish_date}}{% endif %}" class="input_style" id="id_publish" placeholder="Enter Publish Date">
+                    </div>
+                    <div class="form-group1">
+                        <label for="id_keywords" class="new_label">Keywords</label>
+                        <textarea rows="4" cols="50" name="keywords" class="input_style" id="id_keywords" placeholder="Enter Keywords">
+                        {% if keywords %}{{keywords}}{% endif %}
+                        </textarea>
+                        <span class="help-block" style="margin-left: 165px;"> Use " , " or 'Enter' to seperate tags</span>
+                    </div>
+                    {% if not idea %}
+                    <div class="form-group1">
+                        <label class="control-label new_label" for="writers">Writers</label>
+                        <select multiple="multiple" id="writers" name="writers">
+                            {% for i in writers %}
+                                <option value="{{i.id}}">{{i.first_name}}&nbsp;{{i.last_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                        <button type="submit" class="btn btn-default mybtn">Save</button>&nbsp;&nbsp;
+                        <a href="#" style="text-decoration:none;"><button type="button" class="btn btn-default">Cancel</button> </a>
+                </form>
+                </div>
+            </div>
+            <!--/span-->
+        </div><!--/row-->
+        {% else %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                {% if not idea %}
+                    <strong>Successfully created a document!</strong> A mail has been send to assigned users.
+                {% else %}
+                    <strong>Successfully created a idea!</strong>  For submit to content senior please go to the "not submitted" folder under "My ideas" block
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

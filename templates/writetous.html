@@ -1,0 +1,66 @@
+{% extends "home.html" %}
+{% load front_tags %}
+{% block title %} Write To Us -{% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        <li class="breadcum_sel"><a href="#">Write To Us</a></li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+<article class="col-lg-9 col-md-9">
+        <div class="row">
+          <div class="left_article">
+          <h2 class="write_head">Write to Civil Society</h2>
+          <h2 class="write_sub">Comment, share your thoughts <br/>or suggest a story we could do</h2>
+                {% if comit %}
+                <p>Thank you for writing to us , we will get back to you very soon.</p>
+                {% else %}
+                <form class="form-horizontal write-to-class" role="form" action="." method="POST" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="form-group">
+                            </div>
+                              <div class="form-group">
+<!--                                <label class="control-label col-sm-2" for="description">{{form.description.label}}:</label>-->
+                                <div class="col-sm-11"> 
+                                        <textarea name="description" class="form-control" id="id_description" rows="10" cols="20" required value="Dear Editor, ">Dear Editor,</textarea>
+                                    </div>
+                              </div>
+                              <div class="form-group">
+<!--                                <label class="control-label col-sm-2" for="name">{{form.name.label}}:</label>-->
+                                <div class="col-sm-11">
+                                  <input type="text" class="form-control" name = "name" id="id_name" placeholder="Enter Name *" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+<!--                                <label class="control-label col-sm-2" for="email">{{form.email.label}}:</label>-->
+                                <div class="col-sm-11"> 
+                                  <input type="email" class="form-control" name="email "id="id_email" placeholder="Enter Email *" required>
+                                </div>
+                              </div>
+                              <div class="form-group">
+<!--                                <label class="control-label col-sm-2" for="location">{{form.location.label}}:</label>-->
+                                <div class="col-sm-11"> 
+                                  <input type="text" class="form-control" name="location "id="id_location" placeholder="Enter Location *" required>
+                                </div>
+
+                              </div>
+                              <div class="form-group"> 
+                                <div class="col-sm-offset-2 col-sm-11">
+                                  <button type="submit" class="leave_comment write-to-submit">Submit</button>
+                                </div>
+                              </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+{% endblock %}

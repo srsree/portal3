@@ -1,0 +1,53 @@
+{% extends "home.html" %}
+{% block title %}{{column.name}} - {% endblock %}
+{% block meta %}
+<META name="description" content="{{column.description|striptags|truncatewords:'20'}}">
+<META name="keywords" content="{% for i in column.keywords.all %}{{i.name}}{% if not forloop.last %}, {% endif %}{% endfor %}">
+<meta property=”og:image” content=”{{column.icon.url_869x568}}”/>
+{% endblock %}
+{% block banner %}{% endblock %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        <li>{{column.name}}</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block left %}
+<div class="inner_cont">
+    <h2>{{column.name}}</h2>
+    </div>
+<article class="col-lg-9 col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="left_con">
+            <ul>
+              {% for i in columns %}
+              <li class="col-lg-4 col-sm-4 col-xs-12">
+                <div class="singl_colu">
+                  <div class="inno_h2">
+                    <!--<h2>innovations</h2>-->
+                  </div>
+                  <div class="art_imge">
+                  <!--a href="{% if request.session.aslug == i.slug %}/{{menu.slug}}/{{i.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.slug %}onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')"{% endif %}"><img src="{{i.icon.url_270x180}}" alt="{{i.headline}}"/--><a href="/column/{{column.slug}}/{{i.slug}}/"><img src="{{i.icon.url_270x180}}" alt="{{i.name}}"></a>
+                  </div>
+                  <!--a href="{% if request.session.aslug == i.slug %}/{{menu.slug}}/{{i.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.slug %}onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')"{% endif %}"--><a href="/column/{{i.columnist.category.slug}}/{{i.slug}}/"><h3>{{i.name}}</h3></a>
+                  <p>{{i.description|safe|striptags|truncatewords:"20"}}</p>
+                  <!--a href="{% if request.session.aslug == i.slug %}/{{menu.slug}}/{{i.slug}}/{% else %}#{% endif %}" {% if not request.session.aslug == i.slug %}onclick="subscribe('/{{menu.slug}}/{{i.slug}}/')"{% endif %}" class="readmore"--><a href="/column/{{i.columnist.category.slug}}/{{i.slug}}/" class="readmore">Read More</a> </div>
+              </li>
+              {% endfor %}
+
+            </ul>
+          </div>
+
+        </div>
+      </article>
+{% endblock %}
+
+

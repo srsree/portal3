@@ -1,0 +1,84 @@
+{{ form.media }}
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+
+<script type="text/javascript" src="/static/manage/js/jquery-te-1.4.0.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<link type="text/css" rel="stylesheet" href="/static/manage/css/jquery-te-1.4.0.css">
+<script type="text/javascript" src="/static/manage/js/jquery.multi-select.js"> </script>
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.tagsinput.css" />
+<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+	<script type="text/javascript" src="/static/manage/js/jquery.datetimepicker.js"> </script>
+<link href="/static/manage/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+	
+	function onAddTag(tag) {
+		alert("Added a tag: " + tag);
+	}
+	function onRemoveTag(tag) {
+		alert("Removed a tag: " + tag);
+	}
+	
+	function onChangeTag(input,tag) {
+		alert("Changed a tag: " + tag);
+	}
+	
+	$(document).ready(function(){
+	    $(function() {
+		    $('#id_keyword').tagsInput({width:'auto'});
+		    $('#id_date_added').datetimepicker({format:'Y-m-d H:i',});
+	    });
+    });
+
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#id_slug').attr('readonly', true);
+        $('#id_related_videos').multiSelect();
+        $("#user_form").validate({
+            rules :
+            {
+            name : {required : true,maxlength:60},
+            },
+
+        });
+    });
+</script>
+<div class="row" id ="edit_form">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon"></i>{{ obj.name }}</h2>
+                        <div class="box-icon">
+
+                        <a href="#" class="glyphicon glyphicon-remove" onclick="return load_page();">Close</a>
+                        </div>
+                    </div>
+                    <div class="box-content">
+                            <form id="user_form" method = "POST" onsubmit="return save_article({{ obj.id }});">{% csrf_token %}
+                            {% if error %}<p style="color:red;"><b>{{error}}</b></p>{% endif %}
+                            {% for field in form %}
+                            <div class="input-group col-md-4">
+                                {{ field.label_tag }}
+                                <br/>
+                                {{ field }}
+                                <p style="color:red">{% if field.errors %}{{ field.errors|striptags }}{% endif %}</p>
+                            </div>
+                            <br/>
+                            {% endfor %}
+                            <div class="input-group col-md-4">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                                <a href="#" class="btn btn-default" data-dismiss="modal" onclick="return load_page();">Close</a>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>

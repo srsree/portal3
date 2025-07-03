@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Photo Feature - {% endblock %}
+{% load front_tags %}
+{% block breadcum %}
+<section class="breadcum_sec">
+  <div class="container">
+    <div class="row">
+    <div class="breadcum">
+      <ul>
+        <li class="breadcum_sel"><a href="/">Home</a></li>
+        
+        <li><a href="/photo-feature/">Photo Feature</a></li>
+        <li>{{photo.name}}</li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block banner %}
+ {% endblock %}
+ {% block left %} 
+ <section class="inner_content">
+ <h2>{{photo.name}}</h2>
+  <div class="container">
+    <div class="row clearfix">
+   		<div class="mar_slider">
+<div id="slider_outside"> 
+	<div id="slideshow-1">
+    {% if not photos %}
+        <h2>No Photos found</h2>
+    {% else %}
+    <ul class="bxslider">
+        {% for i in photos %}
+        <li>
+            <div class="common">
+<!--            <h2>{{i.name}}</h2>-->
+            <div class="popimg"><img src="{{i.image.url_869x568}}"></div>
+        	<div class="popcont">
+                    <p>{{i.description|safe}}</p>
+            </div>
+            </div>
+        </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+<div id="bx-pager">
+  {% for i in photos %}
+        <a data-slide-index="{{forloop.counter0}}" href=""><img  src="{{i.image.url_90x120}}" width=80 height=60></a>
+{% endfor %}
+</div>
+</div>
+
+</section>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<!-- inner cont ends here -->
+ <!-- bxSlider Javascript file -->
+<script src="/static/frontend/js/jquery.bxslider.min.js"></script>
+<!-- bxSlider CSS file -->
+<link href="/static/frontend/css/jquery.bxslider.css" rel="stylesheet" />
+<script>
+$(document).ready(function(){
+    $('.bxslider').bxSlider({
+    pagerCustom: '#bx-pager',
+    auto: false,
+});
+})
+
+
+</script>
+ 
+ {% endblock %}
+ {% block right %}
+ {% endblock %}

@@ -1,0 +1,198 @@
+{% extends "manage/base.html" %}
+{% block title %} Choose Your Choice {% endblock %}
+
+
+{% block rightcontent %}
+
+<script>
+    $(document).ready(function(){
+        $('input').addClass('form-control');
+    });
+
+</script>
+
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,900' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/static/manage/js/jquery.validate.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#choose_form").validate({
+            rules :
+            {
+                what_to_do : {required : true},
+                menu : {required : true},
+                what_to_create : {required : true},
+            },
+        });
+     });
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#menu_div').hide();
+        $('#language_div').hide();
+        $('#what_to_create_div').hide();
+        $('#profile_div').hide();
+        $('#what_to_do').val('')
+        $('#what_to_create').val('');
+        $('#what_to_do').change(function(){
+            var value = $(this).val();
+            if (value == 'edit'){ 
+                window.parent.location="/manage-home/";
+            } else {
+                $('#language_div').show();
+                $('#what_to_create_div').show();
+            }
+        });
+        $("#language").change(function() {
+            var slug=$(this).val();
+            $.ajax({
+                url : "/manage-section/get-frontmenu-ajax/",
+                type : "GET",
+                dataType: "json",
+                data :{'slug':slug},
+                success: function(data) {
+                    if (data) {
+                        var res = data.res;
+                        $('#menu').find('option').remove().end();
+                        $('#menu').append('<option value=""> --------------- </option>');
+                        for (i=0;i<res.length;i++) {
+                            $('<option>', {value : res[i].slug }).html(res[i].name).appendTo('#menu');
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+        $('#menu').change(function(){
+            var value = $(this).val();
+            if (value != ''){
+                $('#what_to_create_div').show();
+            }
+            else {
+                $('#what_to_create').val('');
+                $('#what_to_create_div').hide();
+            }
+        });
+        $("#what_to_create").change(function() {
+            var slug=$(this).val();
+            var lang=$('#language').val();
+            $('#profile_div').show();
+            $('#menu').val('');
+            $('#menu_div').hide();
+            if (slug == 'column'){
+                $.ajax({
+                    url : "/manage-section/get-experts-ajax/",
+                    type : "GET",
+                    dataType: "json",
+                    data :{'slug':lang},
+                    success: function(data) {
+                        if (data) {
+                            var res = data.res;
+                            $('#profile').find('option').remove().end();
+                            $('#profile').append('<option value=""> --------------- </option>');
+                            for (i=0;i<res.length;i++) {
+                                $('<option>', {value : res[i].slug }).html(res[i].name).appendTo('#profile');
+                            }
+                        }
+                    }
+                });
+                return false;
+            }
+            else if (slug == 'faq'){
+                $('#menu_div').hide();
+                $('#profile').val('');
+                $('#profile_div').hide();
+            }
+            else {
+                $('#menu_div').show();
+                $('#profile').val('');
+                $('#profile_div').hide();
+            }
+        });
+     });
+</script>
+
+
+<style>
+.error{color:red; min-width: 200px;}
+.navbar-collapse.collapse { display:none !important; }
+</style>
+
+{{form.media}}
+    <div id="content" class="col-lg-10 col-sm-10" style="width:100%">
+        <div class="row">
+            <div class="box col-md-12">
+                <div class="box-inner">
+                    <div class="box-header well" data-original-title="">
+                        <h2><i class="glyphicon glyphicon-edit"></i>Choose Your Choice</h2>
+                    </div>
+                    <form id="choose_form" action="/manage-section/choose-your-choice/" method = "post" enctype="multipart/form-data">{% csrf_token %}
+                    <div class="box-content">
+                        <div class="input-group col-md-4" id="what_to_do_div">
+                            <label>What You want to do?</label>
+                            <br/>
+                            <select name="what_to_do" id="what_to_do">
+                                <option value="">------------</option>
+                                <option value="create">Create</option>
+                                <option value="edit">Edit</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="input-group col-md-4" id="language_div">
+                            <label>Select Language</label>
+                            <br/>
+                            <select name="language" id="language">
+                                <option value="">------------</option>
+                                {% for lang in language %}
+                                    <option value="{{lang.slug}}">{{lang.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br/>
+                        <div class="input-group col-md-4" id="what_to_create_div">
+                            <label>What to create?</label>
+                            <br/>
+                            <select name="what_to_create" id="what_to_create">
+                                <option value="">------------</option>
+                                <option value="disorder">Disorder</option>
+                                <option value="1">Article</option>
+                                <option value="2">Expert Speak</option>
+                                <option value="3">Interview</option>
+                                <option value="4">Case Studies</option>
+                                <option value="5">Myths and Facts</option>
+                                <option value="column">Column</option>
+                                <option value="faq">FAQ</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="input-group col-md-4" id="menu_div">
+                            <label>Select Menu</label>
+                            <br/>
+                            <select name="menu" id="menu">
+                                <option value="">------------</option>
+                                {% for menu in frontmenu %}
+                                    <option value="{{menu.slug}}">{{menu.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br>
+                        <div class="input-group col-md-4" id="profile_div">
+                            <label>Select Expert</label>
+                            <br/>
+                            <select name="profile" id="profile">
+                                <option value="">------------</option>
+                                {% for prof in profiles %}
+                                    <option value="{{prof.slug}}">{{prof.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
