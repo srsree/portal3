@@ -25,9 +25,9 @@ class FAQ_Category(models.Model):
 
 
 class Question(models.Model):
-    category = models.ForeignKey(FAQ_Category)
-    question = models.CharField(max_length=2000)
-    is_active = models.BooleanField(default = True)
+    category = models.ForeignKey(FAQ_Category, on_delete=models.CASCADE)
+    question = models.CharField(max_length=500)
+    is_active = models.BooleanField(default=True)
     added_on = models.DateTimeField(auto_now_add=True)
 
 
@@ -38,9 +38,9 @@ class Question(models.Model):
         return "%s"%(self.question)
         
 class Answer(models.Model):
-    question = models.ForeignKey(Question)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = RichTextField()
-    is_active = models.BooleanField(default = True)
+    is_active = models.BooleanField(default=True)
     added_on = models.DateTimeField(auto_now_add=True)  
 
     def __unicode__(self):

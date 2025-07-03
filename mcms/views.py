@@ -28,9 +28,9 @@ def subscription_required(request):
     prev_year_date = yearsago(1, today_date)
     user = request.user
     sub = ''
-    if not user.is_anonymous() and Editor.objects.filter(user__email=user.email):
+    if not user.is_anonymous and Editor.objects.filter(user__email=user.email):
         subscribed = True
-    if not user.is_anonymous():
+    if not user.is_anonymous:
         sub = Subscription.objects.filter(status="Success", email=user.email, created_on__gte=prev_year_date)
     if sub:
         subscribed = True
@@ -54,7 +54,7 @@ def raise_404(request):
     # if url mismatch 
     # if query gives error
     # if object doest not find we can use this function
-    return render('404.html', locals(), context_instance=RequestContext(request))
+    return render(request, '404.html', {})
 
 
 def raise_500(request):
@@ -63,7 +63,7 @@ def raise_500(request):
     # if url mismatch 
     # if server error
     # if internal server error
-    return render('500.html', locals(), context_instance=RequestContext(request))
+    return render(request, '500.html', {})
 
 def signout(request):
     # signout function

@@ -12,7 +12,7 @@ def import_data():
         cat = ''
         for (name,value) in items:
             row[name]=value.strip()
-        print row['Title']
+        print(row['Title'])
         f = ''
         try:
             #import pdb;pdb.set_trace()
@@ -32,9 +32,9 @@ def import_data():
                     Article.objects.create(frontmenu=cat[0],headline=row['Title'],slug=slugify(row['Title']),synopsis = row['Summary'], byline=row['byline'],description=row['description'])
             else:
                 Article.objects.create(frontmenu=cat[0],headline=row['Title'],slug=slugify(row['Title']),synopsis = row['Summary'], byline=row['byline'],description=row['description'])
-            print "created------------"
+            print("created------------")
         else:
-            print "already exisits-------"
+            print("already exisits-------")
 
 from django.contrib.contenttypes.models import ContentType
 
@@ -47,7 +47,7 @@ def import_comments():
         cat = ''
         for (name,value) in items:
             row[name]=value.strip()
-        print row['Title']
+        print(row['Title'])
         art= ''
         try:
             art = Article.objects.get(headline=row['Title'])
@@ -55,6 +55,6 @@ def import_comments():
             pass
         if art:
             Comments.objects.create(content_type=ContentType.objects.get_for_model(art), object_id=art.id,name=row['uname'],email=row['email'],comment=row['comments'],created_on=row['created'],publish=True)
-            print "created---------------------"
+            print("created---------------------")
         else:
-            print "Not exists -------------"
+            print("Not exists -------------")
